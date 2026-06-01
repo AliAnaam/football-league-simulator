@@ -1,0 +1,23 @@
+# Node dependencies
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# .NET Build artifacts
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# SQLite databases
+**/ligasim.db
+**/ligasim.db-shm
+**/ligasim.db-wal
+
+# OS / IDE artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
