@@ -312,7 +312,7 @@ export default function App() {
       'LPA': 'https://crests.football-data.org/275.svg',
       'RAY': 'https://crests.football-data.org/87.svg',
       'OSA': 'https://crests.football-data.org/79.svg',
-      'SEV': 'https://crests.football-data.org/83.svg',
+      'SEV': 'https://crests.football-data.org/559.svg',
       'CEL': 'https://crests.football-data.org/558.svg',
       'GET': 'https://crests.football-data.org/82.svg',
       'VAL': 'https://crests.football-data.org/95.svg',
