@@ -361,10 +361,10 @@ export default function App() {
             </div>
             <div>
               <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent">
-                LIGASIM PRO
+                LEAGUE SIM
               </span>
               <span className="block text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">
-                LaLiga Simulator
+                Football League Simulator
               </span>
             </div>
           </div>
