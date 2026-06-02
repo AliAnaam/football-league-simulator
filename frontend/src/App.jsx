@@ -16,6 +16,7 @@ import {
   X, 
   Info,
   Sparkles,
+  LayoutDashboard,
   ArrowRight,
   TrendingUp,
   Award,
@@ -23,6 +24,23 @@ import {
   Target
 } from 'lucide-react';
 import { api } from './api';
+
+// Custom LaLiga EA Sports Logo SVG Icon Component
+function LaLigaLogo({ className = "w-6 h-6" }) {
+  return (
+    <svg 
+      viewBox="0 0 26 26" 
+      fill="currentColor" 
+      className={className} 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Left L */}
+      <path d="M7 2 h5.5 l-3.5 14 h8.5 l-1 4 h-14 Z" />
+      {/* Right L (shifted by dx=6, dy=4.5) */}
+      <path d="M13 6.5 h5.5 l-3.5 14 h8.5 l-1 4 h-14 Z" />
+    </svg>
+  );
+}
 
 export default function App() {
   // Navigation & Auth
@@ -354,19 +372,19 @@ export default function App() {
     <div className="w-full h-full flex overflow-hidden font-sans bg-slate-50">
       
       {/* ================= SIDEBAR ================= */}
-      <aside className="w-64 bg-slate-950 text-slate-100 flex-shrink-0 flex flex-col h-full border-r border-slate-800">
+      <aside className="w-64 bg-emerald-50 text-slate-800 flex-shrink-0 flex flex-col h-full border-r border-emerald-100/80 shadow-sm">
         
         {/* Logo / Header */}
-        <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-900/40">
+        <div className="h-20 flex items-center px-6 border-b border-emerald-100 bg-emerald-100/30">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-500 rounded-xl shadow-btn shadow-emerald-500/20 text-slate-950 animate-pulse-glow">
-              <Trophy className="w-6 h-6" />
+            <div className="p-2.5 bg-emerald-600 rounded-xl shadow-btn shadow-emerald-600/20 text-white animate-pulse-glow">
+              <LaLigaLogo className="w-6 h-6" />
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent">
+              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-emerald-950 via-emerald-800 to-emerald-600 bg-clip-text text-transparent">
                 LEAGUE SIM
               </span>
-              <span className="block text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">
+              <span className="block text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-0.5">
                 Football League Simulator
               </span>
             </div>
@@ -376,9 +394,9 @@ export default function App() {
         {/* Navigation Items */}
         <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
           {[
-            { id: 'dashboard', label: 'Anasayfa', icon: Sparkles },
+            { id: 'dashboard', label: 'Anasayfa', icon: LayoutDashboard },
             { id: 'teams', label: 'Takım Yönetimi', icon: Users },
-            { id: 'fixtures', label: 'Fikstürler', icon: Calendar },
+            { id: 'fixtures', label: 'Fikstür', icon: Calendar },
             { id: 'standings', label: 'Puan Durumu', icon: Table },
             { id: 'simulation', label: 'Simülasyon Merkezi', icon: Play }
           ].map(item => {
@@ -390,11 +408,11 @@ export default function App() {
                 onClick={() => { setActiveTab(item.id); playClick(); }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   active 
-                    ? 'bg-emerald-500 text-slate-950 shadow-btn shadow-emerald-500/10 font-semibold' 
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/60'
+                    ? 'bg-emerald-600 text-white shadow-btn shadow-emerald-600/10 font-semibold' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-100/50'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${active ? 'text-slate-950' : 'text-slate-400 group-hover:text-slate-100'}`} />
+                <Icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
                 {item.label}
               </button>
             );
@@ -402,14 +420,14 @@ export default function App() {
         </nav>
 
         {/* Sidebar Footer Info */}
-        <div className="p-4 border-t border-slate-900 bg-slate-950/80 space-y-3">
+        <div className="p-4 border-t border-emerald-100 bg-emerald-100/20 space-y-3">
           
           {/* Sound Controls */}
-          <div className="flex items-center justify-between px-2 py-1 bg-slate-900/40 rounded-lg border border-slate-800/60 text-xs">
-            <span className="text-slate-400">Ses Efektleri</span>
+          <div className="flex items-center justify-between px-2 py-1 bg-white border border-emerald-100 rounded-lg text-xs">
+            <span className="text-slate-600 font-medium">Ses Efektleri</span>
             <button 
               onClick={() => { setSoundEnabled(!soundEnabled); playClick(); }}
-              className={`p-1.5 rounded ${soundEnabled ? 'text-emerald-400 bg-emerald-500/10' : 'text-slate-500 hover:text-slate-300'}`}
+              className={`p-1.5 rounded transition-colors ${soundEnabled ? 'text-emerald-600 bg-emerald-50' : 'text-slate-400 hover:text-slate-600'}`}
               title={soundEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -418,17 +436,17 @@ export default function App() {
 
           {/* Admin / Login Block */}
           {isAdmin ? (
-            <div className="p-3 bg-emerald-950/20 border border-emerald-900/40 rounded-xl space-y-2">
+            <div className="p-3 bg-emerald-100/50 border border-emerald-200/60 rounded-xl space-y-2">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="text-xs font-semibold text-emerald-400">Yönetici Modu</span>
+                <span className="text-xs font-semibold text-emerald-700">Yönetici Modu</span>
               </div>
               <button 
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-slate-900 hover:bg-slate-800 text-rose-400 hover:text-rose-300 border border-slate-800 rounded-lg text-xs font-medium transition-colors duration-150"
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-white hover:bg-slate-50 text-rose-600 hover:text-rose-700 border border-rose-200 rounded-lg text-xs font-medium transition-colors duration-150"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 Çıkış Yap
@@ -437,14 +455,14 @@ export default function App() {
           ) : (
             <button
               onClick={() => { setLoginModalOpen(true); playClick(); }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl text-xs font-bold transition-all duration-150 shadow-btn shadow-emerald-500/10"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all duration-150 shadow-btn shadow-emerald-600/10"
             >
               <LogIn className="w-3.5 h-3.5" />
               Yönetici Girişi
             </button>
           )}
 
-          <div className="text-center text-[10px] text-slate-600">
+          <div className="text-center text-[10px] text-slate-500 font-medium">
             LigaSim Pro v2.0 &copy; 2026
           </div>
         </div>
@@ -629,12 +647,22 @@ export default function App() {
                           else if (index === 2) rankStyle = "bg-amber-600 text-white font-bold";
                           else if (isRelegation) rankStyle = "bg-rose-100 text-rose-700 font-semibold";
 
+                          // Zone color indicator
+                          let zoneColor = 'bg-transparent';
+                          if (index <= 3) zoneColor = 'bg-blue-500';
+                          else if (index <= 5) zoneColor = 'bg-orange-500';
+                          else if (index === 6) zoneColor = 'bg-green-500';
+                          else if (isRelegation) zoneColor = 'bg-rose-500';
+
                           return (
                             <tr key={row.teamId} className="hover:bg-slate-50/50 transition-colors">
-                              <td className="py-2 px-3 text-center">
-                                <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${rankStyle}`}>
-                                  {row.rank}
-                                </span>
+                              <td className="py-2 px-1 text-center">
+                                <div className="flex items-center gap-1">
+                                  <span className={`w-1 h-5 rounded-full flex-shrink-0 ${zoneColor}`}></span>
+                                  <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${rankStyle}`}>
+                                    {row.rank}
+                                  </span>
+                                </div>
                               </td>
                               <td className="py-2 px-3 font-semibold text-slate-800">
                                 <div className="flex items-center gap-2">
@@ -658,6 +686,26 @@ export default function App() {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Position Legend */}
+                  <div className="flex flex-wrap items-center gap-4 mt-4 pt-3 border-t border-slate-100 text-[10px] font-bold">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-blue-500"></span>
+                      <span className="text-slate-500">Şampiyonlar Ligi (1–4)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-orange-500"></span>
+                      <span className="text-slate-500">Avrupa Ligi (5–6)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-green-500"></span>
+                      <span className="text-slate-500">Konferans Ligi (7)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>
+                      <span className="text-slate-500">Küme Düşme (16–18)</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Right side: Lider Takım Card & Gol Krallığı Table */}
@@ -665,42 +713,42 @@ export default function App() {
                   
                   {/* Lider Takım */}
                   {getLeaderTeam() && (
-                    <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950 border border-slate-800 rounded-2xl p-5 text-white shadow-lg">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-white via-emerald-50/10 to-emerald-100/20 border border-emerald-100/80 rounded-2xl p-5 text-slate-800 shadow-sm">
                       
                       {/* Decorative elements */}
-                      <div className="absolute right-0 top-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl"></div>
-                      <div className="absolute right-3 top-3 text-yellow-500/30">
+                      <div className="absolute right-0 top-0 w-28 h-28 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                      <div className="absolute right-3 top-3 text-yellow-500/15">
                         <Award className="w-16 h-16 stroke-[1.2]" />
                       </div>
 
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4">
-                        <Sparkles className="w-3 h-3 text-yellow-400" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-yellow-500/10 text-yellow-700 border border-yellow-500/20 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4">
+                        <Trophy className="w-3 h-3 text-yellow-600" />
                         Lider Takım
                       </span>
 
                       <div className="flex items-start gap-4">
-                        {getTeamLogo(getLeaderTeam(), "w-14 h-14 text-lg border-2 border-slate-700/80 shadow-md")}
+                        {getTeamLogo(getLeaderTeam(), "w-14 h-14 text-lg border-2 border-white shadow-md")}
                         <div className="space-y-1">
-                          <h4 className="text-lg font-bold tracking-tight">{getLeaderTeam().name}</h4>
-                          <p className="text-xs text-emerald-400 font-medium">Teknik Direktör: {getLeaderTeam().manager}</p>
-                          <p className="text-[10px] text-slate-400 font-semibold">{getLeaderTeam().stadium} ({getLeaderTeam().foundingYear} Kuruluş)</p>
+                          <h4 className="text-lg font-bold tracking-tight text-slate-950">{getLeaderTeam().name}</h4>
+                          <p className="text-xs text-emerald-600 font-semibold">Teknik Direktör: {getLeaderTeam().manager}</p>
+                          <p className="text-[10px] text-slate-500 font-medium">{getLeaderTeam().stadium} ({getLeaderTeam().foundingYear} Kuruluş)</p>
                         </div>
                       </div>
 
-                      <div className="mt-5 grid grid-cols-3 gap-2 text-center border-t border-slate-800/80 pt-4 text-xs">
-                        <div className="bg-slate-900/60 p-2 rounded-xl border border-slate-850">
-                          <span className="block text-[10px] text-slate-400 font-medium uppercase">Galibiyet</span>
-                          <span className="font-extrabold text-base text-emerald-400">{standings[0]?.won}</span>
+                      <div className="mt-5 grid grid-cols-3 gap-2 text-center border-t border-emerald-100/60 pt-4 text-xs">
+                        <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/30">
+                          <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wide">Galibiyet</span>
+                          <span className="font-extrabold text-base text-emerald-600">{standings[0]?.won}</span>
                         </div>
-                        <div className="bg-slate-900/60 p-2 rounded-xl border border-slate-850">
-                          <span className="block text-[10px] text-slate-400 font-medium uppercase">Averaj</span>
-                          <span className="font-extrabold text-base text-slate-200">
+                        <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/30">
+                          <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wide">Averaj</span>
+                          <span className="font-extrabold text-base text-slate-700">
                             {standings[0]?.goalDiff > 0 ? `+${standings[0]?.goalDiff}` : standings[0]?.goalDiff}
                           </span>
                         </div>
-                        <div className="bg-slate-900/60 p-2 rounded-xl border border-slate-850">
-                          <span className="block text-[10px] text-slate-400 font-medium uppercase">Puan</span>
-                          <span className="font-extrabold text-base text-yellow-400">{standings[0]?.points}</span>
+                        <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/30">
+                          <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wide">Puan</span>
+                          <span className="font-extrabold text-base text-yellow-600">{standings[0]?.points}</span>
                         </div>
                       </div>
                     </div>
@@ -768,7 +816,7 @@ export default function App() {
                   </button>
                 </div>
               ) : (
-                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-emerald-800 shadow-sm">
+                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 text-xs text-emerald-800 shadow-sm">
                   <div className="flex items-start gap-3.5">
                     <Info className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
                     <div>
@@ -776,13 +824,6 @@ export default function App() {
                       Yeni takımlar eklemek, mevcut takımları düzenlemek veya silmek için sol alttaki <strong>Yönetici Girişi</strong> butonundan oturum açabilirsiniz (admin / admin123).
                     </div>
                   </div>
-                  <button
-                    onClick={() => { setIsAdmin(true); playClick(); }}
-                    className="flex-shrink-0 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl shadow-btn shadow-emerald-500/10 transition-all duration-150 flex items-center gap-1.5 self-start sm:self-center"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 fill-current" />
-                    Hızlı Oturum Aç
-                  </button>
                 </div>
               )}
 
@@ -923,7 +964,7 @@ export default function App() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4">
                   {fixtures.filter(m => m.weekNumber === selectedWeek).map(match => (
                     <div key={match.id} className="flex items-center justify-between p-4 bg-slate-50/60 rounded-2xl border border-slate-100 hover:border-slate-200 hover:bg-white transition-all duration-150">
                       
@@ -1027,12 +1068,22 @@ export default function App() {
                         rowStyle = "bg-rose-50/30";
                       }
 
+                      // Zone color indicator
+                      let zoneColor = 'bg-transparent';
+                      if (index <= 3) zoneColor = 'bg-blue-500';
+                      else if (index <= 5) zoneColor = 'bg-orange-500';
+                      else if (index === 6) zoneColor = 'bg-green-500';
+                      else if (isRelegation) zoneColor = 'bg-rose-500';
+
                       return (
                         <tr key={row.teamId} className={`hover:bg-slate-50/50 transition-colors ${rowStyle}`}>
-                          <td className="py-3.5 px-4 text-center">
-                            <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs ${rankStyle}`}>
-                              {row.rank}
-                            </span>
+                          <td className="py-3.5 px-2 text-center">
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-1 h-6 rounded-full flex-shrink-0 ${zoneColor}`}></span>
+                              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs ${rankStyle}`}>
+                                {row.rank}
+                              </span>
+                            </div>
                           </td>
                           <td className="py-3.5 px-4 font-bold text-slate-800">
                             <div className="flex items-center gap-3">
@@ -1078,6 +1129,26 @@ export default function App() {
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Position Legend */}
+              <div className="flex flex-wrap items-center gap-6 mt-5 pt-4 border-t border-slate-100 text-xs font-bold">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded bg-blue-500 shadow-sm"></span>
+                  <span className="text-slate-600">Şampiyonlar Ligi (1–4)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded bg-orange-500 shadow-sm"></span>
+                  <span className="text-slate-600">Avrupa Ligi (5–6)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded bg-green-500 shadow-sm"></span>
+                  <span className="text-slate-600">Konferans Ligi (7)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded bg-rose-500 shadow-sm"></span>
+                  <span className="text-slate-600">Küme Düşme (16–18)</span>
+                </div>
               </div>
             </div>
           )}
