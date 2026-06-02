@@ -49,6 +49,7 @@ export default function App() {
   // Modals
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [champModalOpen, setChampModalOpen] = useState(false);
+  const [teamModalOpen, setTeamModalOpen] = useState(false);
 
   // Team Management Form State
   const [isEditingTeam, setIsEditingTeam] = useState(false);
@@ -165,6 +166,7 @@ export default function App() {
       }
       setIsEditingTeam(false);
       setEditingTeamId(null);
+      setTeamModalOpen(false);
       resetTeamForm();
       await loadData();
       playClick();
@@ -201,6 +203,7 @@ export default function App() {
       stadium: team.stadium,
       capacity: team.capacity
     });
+    setTeamModalOpen(true);
     playClick();
   };
 
@@ -752,162 +755,17 @@ export default function App() {
           {activeTab === 'teams' && (
             <div className="space-y-6">
               
-              {/* CRUD Form (Available for Admin) */}
+              {/* Top bar with Takım Ekle button or admin notice */}
               {isAdmin ? (
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
-                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-emerald-500" />
-                      {isEditingTeam ? 'Takım Düzenle' : 'Yeni Takım Ekle'}
-                    </h3>
-                    {isEditingTeam && (
-                      <button 
-                        onClick={() => { setIsEditingTeam(false); resetTeamForm(); playClick(); }}
-                        className="p-1 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    )}
-                  </div>
-
-                  <form onSubmit={handleTeamFormSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      
-                      {/* Name */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Takım Adı</label>
-                        <input 
-                          type="text" 
-                          required
-                          value={teamForm.name}
-                          onChange={e => setTeamForm({...teamForm, name: e.target.value})}
-                          placeholder="Real Madrid"
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                        />
-                      </div>
-
-                      {/* ShortName */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Kısa Kod (Short Name)</label>
-                        <input 
-                          type="text" 
-                          required
-                          maxLength={3}
-                          value={teamForm.shortName}
-                          onChange={e => setTeamForm({...teamForm, shortName: e.target.value.toUpperCase()})}
-                          placeholder="RM"
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                        />
-                      </div>
-
-                      {/* Founding Year */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Kuruluş Yılı</label>
-                        <input 
-                          type="number" 
-                          required
-                          value={teamForm.foundingYear}
-                          onChange={e => setTeamForm({...teamForm, foundingYear: parseInt(e.target.value) || 2026})}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                        />
-                      </div>
-
-                      {/* Primary Color Picker */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Ana Renk (HEX / Picker)</label>
-                        <div className="flex gap-2">
-                          <input 
-                            type="color" 
-                            value={teamForm.primaryColor}
-                            onChange={e => setTeamForm({...teamForm, primaryColor: e.target.value})}
-                            className="w-10 h-9 p-0.5 border border-slate-200 rounded-xl cursor-pointer"
-                          />
-                          <input 
-                            type="text" 
-                            required
-                            value={teamForm.primaryColor}
-                            onChange={e => setTeamForm({...teamForm, primaryColor: e.target.value})}
-                            className="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Logo URL */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Logo URL (Boş bırakılabilir)</label>
-                        <input 
-                          type="text" 
-                          value={teamForm.logoUrl}
-                          onChange={e => setTeamForm({...teamForm, logoUrl: e.target.value})}
-                          placeholder="https://example.com/logo.png"
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                        />
-                      </div>
-
-                      {/* Power Slider */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <label className="text-xs font-bold text-slate-500 uppercase">Takım Gücü ({teamForm.power})</label>
-                          <span className="text-xs font-bold text-emerald-600">Slider</span>
-                        </div>
-                        <input 
-                          type="range" 
-                          min={30}
-                          max={100}
-                          value={teamForm.power}
-                          onChange={e => setTeamForm({...teamForm, power: parseInt(e.target.value) || 75})}
-                          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500 mt-3"
-                        />
-                      </div>
-
-                      {/* Manager */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Teknik Direktör</label>
-                        <input 
-                          type="text" 
-                          value={teamForm.manager}
-                          onChange={e => setTeamForm({...teamForm, manager: e.target.value})}
-                          placeholder="Carlo Ancelotti"
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                        />
-                      </div>
-
-                      {/* Stadium */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Stadyum</label>
-                        <input 
-                          type="text" 
-                          value={teamForm.stadium}
-                          onChange={e => setTeamForm({...teamForm, stadium: e.target.value})}
-                          placeholder="Santiago Bernabéu"
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                        />
-                      </div>
-
-                      {/* Capacity */}
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Kapasite</label>
-                        <input 
-                          type="text" 
-                          value={teamForm.capacity}
-                          onChange={e => setTeamForm({...teamForm, capacity: e.target.value})}
-                          placeholder="85,000"
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
-                        />
-                      </div>
-
-                    </div>
-
-                    <div className="flex justify-end gap-2.5 pt-2">
-                      <button
-                        type="submit"
-                        className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition-colors duration-150 shadow-btn shadow-emerald-500/10"
-                      >
-                        <Save className="w-4 h-4" />
-                        {isEditingTeam ? 'Değişiklikleri Kaydet' : 'Takım Ekle'}
-                      </button>
-                    </div>
-                  </form>
+                <div className="flex items-center justify-between">
+                  <div />
+                  <button
+                    onClick={() => { setIsEditingTeam(false); resetTeamForm(); setTeamModalOpen(true); playClick(); }}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition-all duration-150 shadow-btn shadow-emerald-500/10"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Takım Ekle
+                  </button>
                 </div>
               ) : (
                 <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-emerald-800 shadow-sm">
@@ -1444,6 +1302,185 @@ export default function App() {
             >
               <X className="w-5 h-5" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: TEAM ADD/EDIT FORM ================= */}
+      {teamModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm" onClick={(e) => { if (e.target === e.currentTarget) { setTeamModalOpen(false); setIsEditingTeam(false); resetTeamForm(); playClick(); } }}>
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-7 w-full max-w-2xl shadow-2xl flex flex-col relative max-h-[90vh] overflow-y-auto">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl shadow-sm border border-emerald-100/50">
+                  {isEditingTeam ? <Edit className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-lg text-slate-900 tracking-tight">
+                    {isEditingTeam ? 'Takım Düzenle' : 'Yeni Takım Ekle'}
+                  </h3>
+                  <p className="text-xs text-slate-400 font-semibold mt-0.5">
+                    {isEditingTeam ? 'Takım bilgilerini güncelleyin' : 'Lige yeni bir takım ekleyin'}
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => { setTeamModalOpen(false); setIsEditingTeam(false); resetTeamForm(); playClick(); }}
+                className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleTeamFormSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                {/* Name */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Takım Adı</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={teamForm.name}
+                    onChange={e => setTeamForm({...teamForm, name: e.target.value})}
+                    placeholder="Real Madrid"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  />
+                </div>
+
+                {/* ShortName */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Kısa Kod (Short Name)</label>
+                  <input 
+                    type="text" 
+                    required
+                    maxLength={3}
+                    value={teamForm.shortName}
+                    onChange={e => setTeamForm({...teamForm, shortName: e.target.value.toUpperCase()})}
+                    placeholder="RM"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  />
+                </div>
+
+                {/* Founding Year */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Kuruluş Yılı</label>
+                  <input 
+                    type="number" 
+                    required
+                    value={teamForm.foundingYear}
+                    onChange={e => setTeamForm({...teamForm, foundingYear: parseInt(e.target.value) || 2026})}
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  />
+                </div>
+
+                {/* Primary Color Picker */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Ana Renk (HEX / Picker)</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="color" 
+                      value={teamForm.primaryColor}
+                      onChange={e => setTeamForm({...teamForm, primaryColor: e.target.value})}
+                      className="w-10 h-10 p-0.5 border border-slate-200 rounded-xl cursor-pointer"
+                    />
+                    <input 
+                      type="text" 
+                      required
+                      value={teamForm.primaryColor}
+                      onChange={e => setTeamForm({...teamForm, primaryColor: e.target.value})}
+                      className="flex-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Logo URL */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Logo URL (Boş bırakılabilir)</label>
+                  <input 
+                    type="text" 
+                    value={teamForm.logoUrl}
+                    onChange={e => setTeamForm({...teamForm, logoUrl: e.target.value})}
+                    placeholder="https://example.com/logo.png"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  />
+                </div>
+
+                {/* Power Slider */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Takım Gücü ({teamForm.power})</label>
+                    <span className="text-[10px] font-bold text-emerald-600">{teamForm.power}/100</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min={30}
+                    max={100}
+                    value={teamForm.power}
+                    onChange={e => setTeamForm({...teamForm, power: parseInt(e.target.value) || 75})}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500 mt-3"
+                  />
+                </div>
+
+                {/* Manager */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Teknik Direktör</label>
+                  <input 
+                    type="text" 
+                    value={teamForm.manager}
+                    onChange={e => setTeamForm({...teamForm, manager: e.target.value})}
+                    placeholder="Carlo Ancelotti"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  />
+                </div>
+
+                {/* Stadium */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Stadyum</label>
+                  <input 
+                    type="text" 
+                    value={teamForm.stadium}
+                    onChange={e => setTeamForm({...teamForm, stadium: e.target.value})}
+                    placeholder="Santiago Bernabéu"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  />
+                </div>
+
+                {/* Capacity */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Kapasite</label>
+                  <input 
+                    type="text" 
+                    value={teamForm.capacity}
+                    onChange={e => setTeamForm({...teamForm, capacity: e.target.value})}
+                    placeholder="85,000"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  />
+                </div>
+
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => { setTeamModalOpen(false); setIsEditingTeam(false); resetTeamForm(); playClick(); }}
+                  className="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold rounded-xl text-xs transition-colors duration-150"
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition-colors duration-150 shadow-btn shadow-emerald-500/10"
+                >
+                  <Save className="w-4 h-4" />
+                  {isEditingTeam ? 'Değişiklikleri Kaydet' : 'Takım Ekle'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
