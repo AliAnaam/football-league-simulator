@@ -255,16 +255,19 @@ public class SimulationService(
         int rawPowerHome = homeTeam.Power + homeAdvantage + moraleHome;
         int rawPowerAway = awayTeam.Power + moraleAway;
 
-        // Poisson-like expected goal averages
-        double homeExpected = (rawPowerHome / 30.0) * (0.8 + Random.Shared.NextDouble() * 0.4);
-        double awayExpected = (rawPowerAway / 30.0) * (0.8 + Random.Shared.NextDouble() * 0.4);
+        double powerDiff = rawPowerHome - rawPowerAway;
 
-        int homeScore = (int)Math.Floor(homeExpected * Random.Shared.NextDouble() * 1.5);
-        int awayScore = (int)Math.Floor(awayExpected * Random.Shared.NextDouble() * 1.5);
+        // Base expected goals with power difference scaling (stronger team gets higher win probability)
+        double homeExpected = 1.3 + (powerDiff * 0.05) + Random.Shared.NextDouble() * 0.4;
+        double awayExpected = 1.1 - (powerDiff * 0.05) + Random.Shared.NextDouble() * 0.4;
 
-        // Cap at realistic limits
-        homeScore = Math.Min(homeScore, 6);
-        awayScore = Math.Min(awayScore, 6);
+        // Calculate scores with moderate variance centered around the expectation
+        int homeScore = (int)Math.Round(homeExpected + (Random.Shared.NextDouble() - 0.5) * 1.2);
+        int awayScore = (int)Math.Round(awayExpected + (Random.Shared.NextDouble() - 0.5) * 1.2);
+
+        // Ensure scores are non-negative and cap at a realistic max
+        homeScore = Math.Clamp(homeScore, 0, 6);
+        awayScore = Math.Clamp(awayScore, 0, 6);
 
         return (homeScore, awayScore);
     }

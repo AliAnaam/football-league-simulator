@@ -376,7 +376,7 @@ export default function App() {
             </div>
             <div>
               <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-emerald-950 via-emerald-800 to-emerald-600 bg-clip-text text-transparent">
-                LALİGA SIM
+                LALIGA SIM
               </span>
               <span className="block text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-0.5">
                 Football League Simulator
@@ -1300,7 +1300,7 @@ export default function App() {
       {/* ================= MODAL: CHAMPION TROPHY modal ================= */}
       {champModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-md">
-          <div className="bg-gradient-to-b from-white via-slate-50 to-amber-50/20 border border-slate-200 text-slate-800 rounded-3xl p-8 w-[450px] shadow-2xl max-w-md flex flex-col items-center text-center relative overflow-hidden">
+          <div className="bg-white border border-slate-200 text-slate-800 rounded-3xl p-8 w-[450px] shadow-2xl max-w-md flex flex-col items-center text-center relative overflow-hidden">
             
             {/* Sparkle effects */}
             <div className="absolute right-0 top-0 w-36 h-36 bg-amber-400/10 rounded-full blur-3xl"></div>
