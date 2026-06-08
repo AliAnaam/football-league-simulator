@@ -51,7 +51,7 @@ export default function App() {
   const [maxWeeks, setMaxWeeks] = useState(34);
   const [standings, setStandings] = useState([]);
   const [scorers, setScorers] = useState([]);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   
   // View specific state
   const [selectedWeek, setSelectedWeek] = useState(1);
@@ -416,18 +416,6 @@ export default function App() {
         {/* Sidebar Footer Info */}
         <div className="p-4 border-t border-emerald-100 bg-emerald-100/20 space-y-3">
           
-          {/* Sound Controls */}
-          <div className="flex items-center justify-between px-2 py-1 bg-white border border-emerald-100 rounded-lg text-xs">
-            <span className="text-slate-600 font-medium">Ses Efektleri</span>
-            <button 
-              onClick={() => { setSoundEnabled(!soundEnabled); playClick(); }}
-              className={`p-1.5 rounded transition-colors ${soundEnabled ? 'text-emerald-600 bg-emerald-50' : 'text-slate-400 hover:text-slate-600'}`}
-              title={soundEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-            </button>
-          </div>
-
           {/* Admin / Login Block */}
           {isAdmin ? (
             <div className="p-3 bg-emerald-100/50 border border-emerald-200/60 rounded-xl space-y-2">

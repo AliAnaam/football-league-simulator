@@ -9,7 +9,7 @@ const STATE = {
   currentWeek: 1, // Season starts from Week 1 (spec requirement)
   maxWeeks: 34,   // 18 teams = (18-1)*2 = 34 weeks
   isSimulating: false,
-  soundEnabled: true,
+  soundEnabled: false,
   searchQuery: "",
   isLoggedIn: false,
   editingTeamId: null, // tracks team being edited in CRUD form
@@ -39,7 +39,7 @@ const STATE = {
 
   // Top players/scorers mapped to teams for Gol Krallığı
   scorers: [
-    { name: 'R. Benzema', teamId: 'rm', goals: 14 },
+    { name: 'Kylian Mbappé', teamId: 'rm', goals: 14 },
     { name: 'R. Lewandowski', teamId: 'bar', goals: 12 },
     { name: 'A. Griezmann', teamId: 'atm', goals: 10 },
     { name: 'C. Stuani', teamId: 'gir', goals: 9 },
@@ -58,7 +58,7 @@ const STATE = {
 
 // Seed dynamic roster for scorers & team goals
 const PLAYER_NAMES = {
-  rm: ['R. Benzema', 'J. Bellingham', 'Vinicius Jr.', 'Rodrygo', 'F. Valverde'],
+  rm: ['Kylian Mbappé', 'J. Bellingham', 'Vinicius Jr.', 'Rodrygo', 'F. Valverde'],
   bar: ['R. Lewandowski', 'Raphinha', 'Lamine Yamal', 'F. de Jong', 'Pedri'],
   atm: ['A. Griezmann', 'A. Morata', 'Angel Correa', 'R. De Paul', 'Marcos Llorente'],
   gir: ['C. Stuani', 'A. Dovbyk', 'Viktor Tsygankov', 'Yangel Herrera', 'Savinho'],

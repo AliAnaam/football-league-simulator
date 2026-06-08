@@ -12,7 +12,7 @@ public class SimulationService(
 {
     private static readonly Dictionary<string, List<string>> PlayerNames = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "RM", ["R. Benzema", "J. Bellingham", "Vinicius Jr.", "Rodrygo", "F. Valverde"] },
+        { "RM", ["Kylian Mbappé", "J. Bellingham", "Vinicius Jr.", "Rodrygo", "F. Valverde"] },
         { "BAR", ["R. Lewandowski", "Raphinha", "Lamine Yamal", "F. de Jong", "Pedri"] },
         { "ATM", ["A. Griezmann", "A. Morata", "Angel Correa", "R. De Paul", "Marcos Llorente"] },
         { "GIR", ["C. Stuani", "A. Dovbyk", "Viktor Tsygankov", "Yangel Herrera", "Savinho"] },
