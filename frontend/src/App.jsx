@@ -28,17 +28,11 @@ import { api } from './api';
 // Custom LaLiga EA Sports Logo SVG Icon Component
 function LaLigaLogo({ className = "w-6 h-6" }) {
   return (
-    <svg 
-      viewBox="0 0 26 26" 
-      fill="currentColor" 
-      className={className} 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Left L */}
-      <path d="M7 2 h5.5 l-3.5 14 h8.5 l-1 4 h-14 Z" />
-      {/* Right L (shifted by dx=6, dy=4.5) */}
-      <path d="M13 6.5 h5.5 l-3.5 14 h8.5 l-1 4 h-14 Z" />
-    </svg>
+    <img 
+      src="/logo.png" 
+      className={`${className} object-contain`} 
+      alt="System Logo" 
+    />
   );
 }
 
@@ -377,12 +371,12 @@ export default function App() {
         {/* Logo / Header */}
         <div className="h-20 flex items-center px-6 border-b border-emerald-100 bg-emerald-100/30">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-600 rounded-xl shadow-btn shadow-emerald-600/20 text-white animate-pulse-glow">
+            <div className="p-2.5 bg-white rounded-xl shadow-btn shadow-emerald-600/10 border border-emerald-100/50 animate-pulse-glow">
               <LaLigaLogo className="w-6 h-6" />
             </div>
             <div>
               <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-emerald-950 via-emerald-800 to-emerald-600 bg-clip-text text-transparent">
-                LEAGUE SIM
+                LALİGA SIM
               </span>
               <span className="block text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-0.5">
                 Football League Simulator
@@ -398,7 +392,7 @@ export default function App() {
             { id: 'teams', label: 'Takım Yönetimi', icon: Users },
             { id: 'fixtures', label: 'Fikstür', icon: Calendar },
             { id: 'standings', label: 'Puan Durumu', icon: Table },
-            { id: 'simulation', label: 'Simülasyon Merkezi', icon: Play }
+            { id: 'simulation', label: 'Simülasyon', icon: Play }
           ].map(item => {
             const Icon = item.icon;
             const active = activeTab === item.id;
@@ -504,7 +498,7 @@ export default function App() {
               className="flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs shadow-btn shadow-emerald-500/10 transition-all duration-150"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
-              {isSimulating ? 'Simüle Ediliyor...' : 'Haftayı Simüle Et'}
+              {isSimulating ? 'Oynatılıyor...' : 'Haftayı Oynat'}
             </button>
           </div>
         </header>
@@ -535,7 +529,7 @@ export default function App() {
                     {getRecentResults().length === 0 ? (
                       <div className="h-32 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 text-xs">
                         <span>Henüz hiçbir maç oynanmadı.</span>
-                        <span className="text-[10px] mt-0.5 text-slate-400/80">Haftayı simüle ederek başlayın!</span>
+                        <span className="text-[10px] mt-0.5 text-slate-400/80">Haftayı oynatarak başlayın!</span>
                       </div>
                     ) : (
                       getRecentResults().map(match => (
@@ -656,9 +650,9 @@ export default function App() {
 
                           return (
                             <tr key={row.teamId} className="hover:bg-slate-50/50 transition-colors">
-                              <td className="py-2 px-1 text-center">
+                              <td className="py-2 px-0 text-center">
                                 <div className="flex items-center gap-1">
-                                  <span className={`w-1 h-5 rounded-full flex-shrink-0 ${zoneColor}`}></span>
+                                  <span className={`w-[3px] self-stretch rounded-sm flex-shrink-0 ${zoneColor}`}></span>
                                   <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${rankStyle}`}>
                                     {row.rank}
                                   </span>
@@ -914,7 +908,7 @@ export default function App() {
               <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h3 className="font-bold text-slate-900">Haftalık Fikstür Gözlemcisi</h3>
-                  <p className="text-xs text-slate-500">Sezonun tüm haftalarını inceleyin ve simülasyon takvimini görün.</p>
+                  <p className="text-xs text-slate-500">Sezonun tüm haftalarını inceleyin ve maç takvimini görün.</p>
                 </div>
 
                 {/* Week selector wheels */}
@@ -1059,10 +1053,6 @@ export default function App() {
                       if (isLeader) {
                         rankStyle = "bg-yellow-500 text-slate-950 font-bold shadow-md shadow-yellow-500/20";
                         rowStyle = "bg-yellow-500/5";
-                      } else if (index === 1) {
-                        rankStyle = "bg-slate-350 text-slate-900 font-bold";
-                      } else if (index === 2) {
-                        rankStyle = "bg-amber-600 text-white font-bold";
                       } else if (isRelegation) {
                         rankStyle = "bg-rose-100 text-rose-700 font-bold";
                         rowStyle = "bg-rose-50/30";
@@ -1077,9 +1067,9 @@ export default function App() {
 
                       return (
                         <tr key={row.teamId} className={`hover:bg-slate-50/50 transition-colors ${rowStyle}`}>
-                          <td className="py-3.5 px-2 text-center">
+                          <td className="py-3.5 px-0 text-center">
                             <div className="flex items-center gap-1.5">
-                              <span className={`w-1 h-6 rounded-full flex-shrink-0 ${zoneColor}`}></span>
+                              <span className={`w-[3px] self-stretch rounded-sm flex-shrink-0 ${zoneColor}`}></span>
                               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs ${rankStyle}`}>
                                 {row.rank}
                               </span>
@@ -1089,9 +1079,6 @@ export default function App() {
                             <div className="flex items-center gap-3">
                               {getTeamLogo(row, "w-6 h-6 text-[10px]")}
                               <span>{row.teamName}</span>
-                              
-                              {/* Morale Dot indicator */}
-                              <span className={`w-2 h-2 rounded-full shadow-sm ml-1 ${getMoraleColor(row.morale)}`} title={`Takım Morali: ${row.morale}%`}></span>
                             </div>
                           </td>
                           <td className="py-3.5 px-4 text-center font-medium text-slate-600">{row.played}</td>
@@ -1105,17 +1092,19 @@ export default function App() {
                           </td>
                           <td className="py-3.5 px-4 text-center font-extrabold text-slate-950 bg-slate-100/50 text-base">{row.points}</td>
                           <td className="py-3.5 px-4">
-                            <div className="flex items-center justify-center gap-1">
+                            <div className="flex items-center justify-center gap-1.5">
                               {row.form && row.form.length > 0 ? (
                                 row.form.map((f, i) => {
-                                  let style = "bg-slate-200 text-slate-600";
-                                  if (f === 'G') style = "bg-emerald-500 text-slate-950 font-bold";
-                                  if (f === 'M') style = "bg-rose-500 text-white font-bold";
-                                  if (f === 'B') style = "bg-amber-400 text-slate-950 font-bold";
+                                  let bgColor = "bg-slate-100 border-slate-200";
+                                  let iconColor = "text-slate-400";
+                                  let icon = '—';
+                                  if (f === 'G') { bgColor = "bg-emerald-50 border-emerald-200"; iconColor = "text-emerald-600"; icon = '✓'; }
+                                  if (f === 'M') { bgColor = "bg-rose-50 border-rose-200"; iconColor = "text-rose-500"; icon = '✗'; }
+                                  if (f === 'B') { bgColor = "bg-slate-50 border-slate-200"; iconColor = "text-slate-400"; icon = '—'; }
 
                                   return (
-                                    <span key={i} className={`inline-flex items-center justify-center w-5 h-5 rounded-md text-[9px] shadow-sm ${style}`}>
-                                      {f}
+                                    <span key={i} className={`inline-flex items-center justify-center w-6 h-6 rounded-full border text-xs font-bold ${bgColor} ${iconColor}`}>
+                                      {icon}
                                     </span>
                                   );
                                 })
@@ -1161,7 +1150,7 @@ export default function App() {
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5 h-fit">
                 <div className="space-y-1">
                   <h3 className="font-bold text-slate-900">Simülasyon Merkezi</h3>
-                  <p className="text-xs text-slate-500">Tüm sezonu adım adım veya anında simüle edin.</p>
+                  <p className="text-xs text-slate-500">Tüm sezonu adım adım veya anında oynatın.</p>
                 </div>
 
                 <div className="space-y-3.5 border-t border-slate-100 pt-5">
@@ -1181,16 +1170,15 @@ export default function App() {
                     className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-slate-950 font-extrabold rounded-xl text-sm shadow-btn shadow-emerald-500/10 transition-all duration-150"
                   >
                     <Play className="w-4 h-4 fill-current" />
-                    {isSimulating ? 'Simüle Ediliyor...' : `${currentWeek}. Haftayı Simüle Et`}
+                    {isSimulating ? 'Oynatılıyor...' : `${currentWeek}. Haftayı Oynat`}
                   </button>
 
                   <button
                     disabled={isSimulating || (fixtures.length > 0 && fixtures.every(m => m.played))}
                     onClick={handleSimulateRemaining}
-                    className="w-full flex items-center justify-center gap-2 py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-slate-900 text-white font-extrabold border border-slate-850 rounded-xl text-sm transition-all duration-150"
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:hover:bg-slate-100 text-slate-800 font-extrabold border border-slate-200 rounded-xl text-sm transition-all duration-150"
                   >
-                    <Zap className="w-4 h-4 text-emerald-400 fill-current" />
-                    Kalan Tüm Sezonu Simüle Et
+                    Tüm Sezonu Oynat
                   </button>
 
                   <button
@@ -1223,7 +1211,7 @@ export default function App() {
                 <div className="flex-1 font-mono text-xs space-y-2 overflow-y-auto max-h-[350px] pr-2 text-emerald-400/90 scrollbar-thin">
                   {simLogs.length === 0 ? (
                     <div className="h-full flex items-center justify-center text-slate-500 select-none">
-                      &gt; Bekleniyor. Haftayı simüle ettiğinizde sonuçlar burada görünecektir...
+                      &gt; Bekleniyor. Haftayı oynattığınızda sonuçlar burada görünecektir...
                     </div>
                   ) : (
                     simLogs.map((log, index) => (
@@ -1312,45 +1300,45 @@ export default function App() {
       {/* ================= MODAL: CHAMPION TROPHY modal ================= */}
       {champModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-md">
-          <div className="bg-gradient-to-b from-slate-900 via-slate-950 to-emerald-950 border border-slate-800 text-white rounded-3xl p-8 w-[450px] shadow-2xl max-w-md flex flex-col items-center text-center relative overflow-hidden">
+          <div className="bg-gradient-to-b from-white via-slate-50 to-amber-50/20 border border-slate-200 text-slate-800 rounded-3xl p-8 w-[450px] shadow-2xl max-w-md flex flex-col items-center text-center relative overflow-hidden">
             
             {/* Sparkle effects */}
-            <div className="absolute right-0 top-0 w-36 h-36 bg-emerald-500/15 rounded-full blur-3xl"></div>
-            <div className="absolute left-0 bottom-0 w-36 h-36 bg-yellow-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute right-0 top-0 w-36 h-36 bg-amber-400/10 rounded-full blur-3xl"></div>
+            <div className="absolute left-0 bottom-0 w-36 h-36 bg-yellow-400/10 rounded-full blur-3xl"></div>
 
             {/* Icon */}
-            <div className="p-4 bg-yellow-500 rounded-2xl shadow-lg shadow-yellow-500/30 text-slate-950 mb-5 relative animate-bounce">
+            <div className="p-4 bg-yellow-400 text-slate-950 mb-5 relative animate-bounce rounded-2xl shadow-lg shadow-yellow-400/20">
               <Trophy className="w-12 h-12 stroke-[1.5]" />
             </div>
 
-            <span className="text-[10px] font-extrabold text-yellow-400 uppercase tracking-widest border border-yellow-500/20 bg-yellow-500/5 px-3 py-1 rounded-full mb-2">
+            <span className="text-[10px] font-extrabold text-yellow-600 uppercase tracking-widest border border-yellow-500/20 bg-yellow-50 px-3 py-1 rounded-full mb-2">
               Sezon Tamamlandı
             </span>
 
-            <h3 className="font-extrabold text-2xl tracking-tight text-white">LALIGA ŞAMPİYONU</h3>
+            <h3 className="font-extrabold text-2xl tracking-tight text-slate-900">LALIGA ŞAMPİYONU</h3>
             
             {standings.length > 0 && (
               <div className="mt-6 w-full space-y-4">
                 
                 {/* Champ team banner */}
-                <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-2xl flex items-center justify-center gap-4">
-                  {getTeamLogo(teams.find(t => t.id === standings[0].teamId), "w-14 h-14 text-lg border border-slate-700/80 shadow-md")}
+                <div className="p-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-center gap-4 shadow-sm">
+                  {getTeamLogo(teams.find(t => t.id === standings[0].teamId), "w-14 h-14 text-lg border border-slate-100 shadow-sm")}
                   <div className="text-left space-y-1">
-                    <h4 className="text-lg font-bold text-white leading-tight">{standings[0].teamName}</h4>
-                    <p className="text-xs text-emerald-400 font-medium">Teknik Direktör: {teams.find(t => t.id === standings[0].teamId)?.manager}</p>
-                    <p className="text-[10px] text-slate-400 font-semibold">{teams.find(t => t.id === standings[0].teamId)?.stadium}</p>
+                    <h4 className="text-lg font-bold text-slate-900 leading-tight">{standings[0].teamName}</h4>
+                    <p className="text-xs text-emerald-600 font-bold">Teknik Direktör: {teams.find(t => t.id === standings[0].teamId)?.manager}</p>
+                    <p className="text-[10px] text-slate-500 font-semibold">{teams.find(t => t.id === standings[0].teamId)?.stadium}</p>
                   </div>
                 </div>
 
                 {/* Scorer and Season stats */}
                 <div className="grid grid-cols-2 gap-2 text-center text-xs">
-                  <div className="bg-slate-900/60 p-3 rounded-2xl border border-slate-850/80">
-                    <span className="block text-[9px] text-slate-400 font-medium uppercase mb-0.5">Şampiyon Puanı</span>
-                    <span className="font-extrabold text-lg text-yellow-400">{standings[0].points} Puan</span>
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <span className="block text-[9px] text-slate-500 font-medium uppercase mb-0.5">Şampiyon Puanı</span>
+                    <span className="font-extrabold text-lg text-yellow-600">{standings[0].points} Puan</span>
                   </div>
-                  <div className="bg-slate-900/60 p-3 rounded-2xl border border-slate-850/80">
-                    <span className="block text-[9px] text-slate-400 font-medium uppercase mb-0.5">Sezon Gol Kralı</span>
-                    <span className="font-extrabold text-xs text-white truncate block max-w-[120px] mx-auto">
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <span className="block text-[9px] text-slate-500 font-medium uppercase mb-0.5">Sezon Gol Kralı</span>
+                    <span className="font-extrabold text-xs text-slate-900 truncate block max-w-[120px] mx-auto">
                       {scorers.length > 0 ? `${scorers[0].name} (${scorers[0].goals} Gol)` : '-'}
                     </span>
                   </div>
@@ -1361,15 +1349,14 @@ export default function App() {
 
             <button
               onClick={handleResetSeason}
-              className="w-full mt-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-2xl text-xs tracking-wider transition-all duration-150 shadow-btn shadow-emerald-500/10 flex items-center justify-center gap-2"
+              className="w-full mt-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-2xl text-xs tracking-wider transition-all duration-150 shadow-btn shadow-emerald-500/10 flex items-center justify-center"
             >
-              <Sparkles className="w-4 h-4 fill-current" />
               Yeni Sezon Başlat
             </button>
 
             <button 
               onClick={() => { setChampModalOpen(false); playClick(); }}
-              className="absolute right-4 top-4 p-1.5 hover:bg-slate-900 rounded-full text-slate-500 hover:text-slate-300 transition-colors"
+              className="absolute right-4 top-4 p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
