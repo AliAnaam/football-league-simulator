@@ -1,8 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY ["LigaSim.API.csproj", "."]
-RUN dotnet restore "LigaSim.API.csproj"
+COPY ["backend/LigaSim.API/LigaSim.API.csproj", "backend/LigaSim.API/"]
+RUN dotnet restore "backend/LigaSim.API/LigaSim.API.csproj"
 COPY . .
+WORKDIR "/src/backend/LigaSim.API"
 RUN dotnet publish "LigaSim.API.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
