@@ -36,6 +36,174 @@ function LaLigaLogo({ className = "w-6 h-6" }) {
   );
 }
 
+// Fireworks celebration canvas component
+function Fireworks() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animId;
+    let particles = [];
+    let rockets = [];
+    let lastLaunch = 0;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const colors = [
+      '#FF4B44', '#FFD700', '#FF6B6B', '#FFA500', '#FF1493',
+      '#00CED1', '#7B68EE', '#FF69B4', '#ADFF2F', '#FFE4B5',
+      '#FF4500', '#DA70D6', '#40E0D0', '#F0E68C', '#FF8C00'
+    ];
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5 + 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.015 + 0.01;
+        this.size = Math.random() * 3 + 1;
+        this.gravity = 0.05;
+        this.trail = [];
+      }
+      update() {
+        this.trail.push({ x: this.x, y: this.y, alpha: this.alpha });
+        if (this.trail.length > 6) this.trail.shift();
+        this.vy += this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= this.decay;
+      }
+      draw(ctx) {
+        // Draw trail
+        for (let i = 0; i < this.trail.length; i++) {
+          const t = this.trail[i];
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, this.size * 0.5, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.globalAlpha = t.alpha * (i / this.trail.length) * 0.3;
+          ctx.fill();
+        }
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.fill();
+        // Glow effect
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha * 0.15;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    class Rocket {
+      constructor(canvas) {
+        this.x = Math.random() * canvas.width * 0.6 + canvas.width * 0.2;
+        this.y = canvas.height;
+        this.targetY = Math.random() * canvas.height * 0.4 + canvas.height * 0.1;
+        this.vy = -(Math.random() * 4 + 6);
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.trail = [];
+        this.exploded = false;
+      }
+      update() {
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > 12) this.trail.shift();
+        this.y += this.vy;
+        this.vy *= 0.98;
+        if (this.y <= this.targetY || this.vy > -1.5) {
+          this.exploded = true;
+        }
+      }
+      draw(ctx) {
+        for (let i = 0; i < this.trail.length; i++) {
+          const t = this.trail[i];
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.globalAlpha = (i / this.trail.length) * 0.4;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFF';
+        ctx.globalAlpha = 1;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    const loop = (timestamp) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Launch new rockets periodically
+      if (timestamp - lastLaunch > 400 + Math.random() * 600) {
+        rockets.push(new Rocket(canvas));
+        if (Math.random() > 0.5) rockets.push(new Rocket(canvas));
+        lastLaunch = timestamp;
+      }
+
+      // Update rockets
+      rockets = rockets.filter(r => {
+        r.update();
+        if (r.exploded) {
+          const count = Math.floor(Math.random() * 40) + 50;
+          for (let i = 0; i < count; i++) {
+            particles.push(new Particle(r.x, r.y, r.color));
+          }
+          // Secondary ring of particles
+          const ringColor = colors[Math.floor(Math.random() * colors.length)];
+          for (let i = 0; i < 20; i++) {
+            particles.push(new Particle(r.x, r.y, ringColor));
+          }
+          return false;
+        }
+        r.draw(ctx);
+        return true;
+      });
+
+      // Update particles
+      particles = particles.filter(p => {
+        p.update();
+        if (p.alpha <= 0) return false;
+        p.draw(ctx);
+        return true;
+      });
+
+      animId = requestAnimationFrame(loop);
+    };
+    animId = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 z-50 pointer-events-none"
+      style={{ zIndex: 51 }}
+    />
+  );
+}
+
 export default function App() {
   // Navigation & Auth
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -80,27 +248,7 @@ export default function App() {
 
   // Sound Engine Helper
   const playClick = () => {
-    if (!soundEnabled) return;
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(550, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.08);
-      
-      gain.gain.setValueAtTime(0.04, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-      
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      
-      osc.start();
-      osc.stop(ctx.currentTime + 0.08);
-    } catch(e) {
-      // Audio support check
-    }
+    // Sound effects disabled per user request
   };
 
   // Load Initial Data
@@ -366,19 +514,19 @@ export default function App() {
     <div className="w-full h-full flex overflow-hidden font-sans bg-slate-50">
       
       {/* ================= SIDEBAR ================= */}
-      <aside className="w-64 bg-emerald-50 text-slate-800 flex-shrink-0 flex flex-col h-full border-r border-emerald-100/80 shadow-sm">
+      <aside className="w-64 bg-red-50 text-slate-800 flex-shrink-0 flex flex-col h-full border-r border-red-100/80 shadow-sm">
         
         {/* Logo / Header */}
-        <div className="h-20 flex items-center px-6 border-b border-emerald-100 bg-emerald-100/30">
+        <div className="h-20 flex items-center px-6 border-b border-red-100 bg-red-100/30">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-white rounded-xl shadow-btn shadow-emerald-600/10 border border-emerald-100/50 animate-pulse-glow">
+            <div className="p-2.5 bg-white rounded-xl shadow-btn shadow-red-600/10 border border-red-100/50 animate-pulse-glow">
               <LaLigaLogo className="w-6 h-6" />
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-emerald-950 via-emerald-800 to-emerald-600 bg-clip-text text-transparent">
+              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-red-950 via-red-800 to-red-600 bg-clip-text text-transparent">
                 LALIGA SIM
               </span>
-              <span className="block text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-0.5">
+              <span className="block text-[10px] text-red-700 font-bold uppercase tracking-widest mt-0.5">
                 Football League Simulator
               </span>
             </div>
@@ -402,8 +550,8 @@ export default function App() {
                 onClick={() => { setActiveTab(item.id); playClick(); }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   active 
-                    ? 'bg-emerald-600 text-white shadow-btn shadow-emerald-600/10 font-semibold' 
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-100/50'
+                    ? 'bg-red-600 text-white shadow-btn shadow-red-600/10 font-semibold' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-red-100/50'
                 }`}
               >
                 <Icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
@@ -414,17 +562,17 @@ export default function App() {
         </nav>
 
         {/* Sidebar Footer Info */}
-        <div className="p-4 border-t border-emerald-100 bg-emerald-100/20 space-y-3">
+        <div className="p-4 border-t border-red-100 bg-red-100/20 space-y-3">
           
           {/* Admin / Login Block */}
           {isAdmin ? (
-            <div className="p-3 bg-emerald-100/50 border border-emerald-200/60 rounded-xl space-y-2">
+            <div className="p-3 bg-red-100/50 border border-red-200/60 rounded-xl space-y-2">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                 </span>
-                <span className="text-xs font-semibold text-emerald-700">Yönetici Modu</span>
+                <span className="text-xs font-semibold text-red-700">Yönetici Modu</span>
               </div>
               <button 
                 onClick={handleLogout}
@@ -437,7 +585,7 @@ export default function App() {
           ) : (
             <button
               onClick={() => { setLoginModalOpen(true); playClick(); }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all duration-150 shadow-btn shadow-emerald-600/10"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all duration-150 shadow-btn shadow-red-600/10"
             >
               <LogIn className="w-3.5 h-3.5" />
               Yönetici Girişi
@@ -466,7 +614,7 @@ export default function App() {
             
             <div className="h-4 w-px bg-slate-200"></div>
 
-            <div className="flex items-center gap-2 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full text-xs font-bold">
+            <div className="flex items-center gap-2 px-2.5 py-1 bg-red-50 text-red-700 border border-red-100 rounded-full text-xs font-bold">
               <Calendar className="w-3.5 h-3.5" />
               <span>Hafta {currentWeek} / {maxWeeks}</span>
             </div>
@@ -483,7 +631,7 @@ export default function App() {
             <button
               disabled={isSimulating || (fixtures.length > 0 && fixtures.every(m => m.played))}
               onClick={handleSimulateWeek}
-              className="flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs shadow-btn shadow-emerald-500/10 transition-all duration-150"
+              className="flex items-center gap-1.5 px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:hover:bg-red-500 text-slate-950 font-bold rounded-xl text-xs shadow-btn shadow-red-500/10 transition-all duration-150"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               {isSimulating ? 'Oynatılıyor...' : 'Haftayı Oynat'}
@@ -505,7 +653,7 @@ export default function App() {
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+                      <span className="h-2 w-2 rounded-full bg-red-500"></span>
                       Son Maç Sonuçları
                     </h3>
                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
@@ -591,12 +739,12 @@ export default function App() {
                 <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col">
                   <div className="flex items-center justify-between mb-4 flex-shrink-0">
                     <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+                      <span className="h-2 w-2 rounded-full bg-red-500"></span>
                       Puan Durumu
                     </h3>
                     <button 
                       onClick={() => { setActiveTab('standings'); playClick(); }}
-                      className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors"
+                      className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 transition-colors"
                     >
                       Tüm Tabloyu Gör <ArrowRight className="w-3.5 h-3.5" />
                     </button>
@@ -695,10 +843,10 @@ export default function App() {
                   
                   {/* Lider Takım */}
                   {getLeaderTeam() && (
-                    <div className="relative overflow-hidden bg-gradient-to-br from-white via-emerald-50/10 to-emerald-100/20 border border-emerald-100/80 rounded-2xl p-5 text-slate-800 shadow-sm">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-white via-red-50/10 to-red-100/20 border border-red-100/80 rounded-2xl p-5 text-slate-800 shadow-sm">
                       
                       {/* Decorative elements */}
-                      <div className="absolute right-0 top-0 w-28 h-28 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                      <div className="absolute right-0 top-0 w-28 h-28 bg-red-500/5 rounded-full blur-2xl"></div>
                       <div className="absolute right-3 top-3 text-yellow-500/15">
                         <Award className="w-16 h-16 stroke-[1.2]" />
                       </div>
@@ -712,23 +860,23 @@ export default function App() {
                         {getTeamLogo(getLeaderTeam(), "w-14 h-14 text-lg border-2 border-white shadow-md")}
                         <div className="space-y-1">
                           <h4 className="text-lg font-bold tracking-tight text-slate-950">{getLeaderTeam().name}</h4>
-                          <p className="text-xs text-emerald-600 font-semibold">Teknik Direktör: {getLeaderTeam().manager}</p>
+                          <p className="text-xs text-red-600 font-semibold">Teknik Direktör: {getLeaderTeam().manager}</p>
                           <p className="text-[10px] text-slate-500 font-medium">{getLeaderTeam().stadium} ({getLeaderTeam().foundingYear} Kuruluş)</p>
                         </div>
                       </div>
 
-                      <div className="mt-5 grid grid-cols-3 gap-2 text-center border-t border-emerald-100/60 pt-4 text-xs">
-                        <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/30">
+                      <div className="mt-5 grid grid-cols-3 gap-2 text-center border-t border-red-100/60 pt-4 text-xs">
+                        <div className="bg-red-50/40 p-2 rounded-xl border border-red-100/30">
                           <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wide">Galibiyet</span>
-                          <span className="font-extrabold text-base text-emerald-600">{standings[0]?.won}</span>
+                          <span className="font-extrabold text-base text-red-600">{standings[0]?.won}</span>
                         </div>
-                        <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/30">
+                        <div className="bg-red-50/40 p-2 rounded-xl border border-red-100/30">
                           <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wide">Averaj</span>
                           <span className="font-extrabold text-base text-slate-700">
                             {standings[0]?.goalDiff > 0 ? `+${standings[0]?.goalDiff}` : standings[0]?.goalDiff}
                           </span>
                         </div>
-                        <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/30">
+                        <div className="bg-red-50/40 p-2 rounded-xl border border-red-100/30">
                           <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wide">Puan</span>
                           <span className="font-extrabold text-base text-yellow-600">{standings[0]?.points}</span>
                         </div>
@@ -740,7 +888,7 @@ export default function App() {
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex-1 flex flex-col">
                     <div className="flex items-center justify-between mb-4 flex-shrink-0">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+                        <span className="h-2 w-2 rounded-full bg-red-500"></span>
                         Gol Krallığı
                       </h3>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">LFP Pichichi</span>
@@ -764,7 +912,7 @@ export default function App() {
                                   <div className="text-[10px] text-slate-500 font-semibold">{player.teamName}</div>
                                 </div>
                               </div>
-                              <span className="px-2.5 py-1 bg-emerald-50 border border-emerald-100 text-emerald-800 font-bold rounded-lg text-xs">
+                              <span className="px-2.5 py-1 bg-red-50 border border-red-100 text-red-800 font-bold rounded-lg text-xs">
                                 {player.goals} Gol
                               </span>
                             </div>
@@ -791,18 +939,18 @@ export default function App() {
                   <div />
                   <button
                     onClick={() => { setIsEditingTeam(false); resetTeamForm(); setTeamModalOpen(true); playClick(); }}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition-all duration-150 shadow-btn shadow-emerald-500/10"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-slate-950 font-bold rounded-xl text-xs transition-all duration-150 shadow-btn shadow-red-500/10"
                   >
                     <Plus className="w-4 h-4" />
                     Takım Ekle
                   </button>
                 </div>
               ) : (
-                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 text-xs text-emerald-800 shadow-sm">
+                <div className="bg-red-50 border border-red-100 rounded-2xl p-5 text-xs text-red-800 shadow-sm">
                   <div className="flex items-start gap-3.5">
-                    <Info className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <Info className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <span className="font-bold block mb-0.5 text-emerald-950">Yönetici Yetkisi Gerekli</span>
+                      <span className="font-bold block mb-0.5 text-red-950">Yönetici Yetkisi Gerekli</span>
                       Yeni takımlar eklemek, mevcut takımları düzenlemek veya silmek için sol alttaki <strong>Yönetici Girişi</strong> butonundan oturum açabilirsiniz (admin / admin123).
                     </div>
                   </div>
@@ -856,7 +1004,7 @@ export default function App() {
                         </div>
                         <div>
                           <span className="block text-[8px] text-slate-400 font-medium uppercase">Güç</span>
-                          <span className="text-emerald-600 font-bold block">{team.power} / 100</span>
+                          <span className="text-red-600 font-bold block">{team.power} / 100</span>
                         </div>
                       </div>
 
@@ -907,7 +1055,7 @@ export default function App() {
 
                     let btnStyle = "border-slate-200 text-slate-600 hover:bg-slate-50";
                     if (isSelected) btnStyle = "bg-slate-900 border-slate-900 text-white font-bold shadow-md";
-                    else if (isCurrent) btnStyle = "border-emerald-400 bg-emerald-50 text-emerald-700 font-bold";
+                    else if (isCurrent) btnStyle = "border-red-400 bg-red-50 text-red-700 font-bold";
 
                     return (
                       <button
@@ -938,7 +1086,7 @@ export default function App() {
                     <button
                       disabled={isSimulating}
                       onClick={handleSimulateWeek}
-                      className="flex items-center gap-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-slate-950 font-bold rounded-xl text-xs shadow-btn shadow-emerald-500/10 transition-all duration-150"
+                      className="flex items-center gap-1 px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-40 text-slate-950 font-bold rounded-xl text-xs shadow-btn shadow-red-500/10 transition-all duration-150"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       Bu Haftayı Oynat
@@ -1142,12 +1290,12 @@ export default function App() {
                 </div>
 
                 <div className="space-y-3.5 border-t border-slate-100 pt-5">
-                  <div className="p-4 bg-emerald-50 border border-emerald-100/80 rounded-2xl">
-                    <span className="block text-[10px] text-emerald-800 font-extrabold uppercase tracking-wider mb-1">Aktif Durum</span>
-                    <div className="text-emerald-900 font-bold text-sm">
+                  <div className="p-4 bg-red-50 border border-red-100/80 rounded-2xl">
+                    <span className="block text-[10px] text-red-800 font-extrabold uppercase tracking-wider mb-1">Aktif Durum</span>
+                    <div className="text-red-900 font-bold text-sm">
                       Aktif Hafta: Hafta {currentWeek}
                     </div>
-                    <div className="text-[11px] text-emerald-850 mt-1">
+                    <div className="text-[11px] text-red-850 mt-1">
                       Kalan fikstür sayısı: {fixtures.filter(m => !m.played).length} maç.
                     </div>
                   </div>
@@ -1155,7 +1303,7 @@ export default function App() {
                   <button
                     disabled={isSimulating || (fixtures.length > 0 && fixtures.every(m => m.played))}
                     onClick={handleSimulateWeek}
-                    className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-slate-950 font-extrabold rounded-xl text-sm shadow-btn shadow-emerald-500/10 transition-all duration-150"
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:hover:bg-red-500 text-slate-950 font-extrabold rounded-xl text-sm shadow-btn shadow-red-500/10 transition-all duration-150"
                   >
                     <Play className="w-4 h-4 fill-current" />
                     {isSimulating ? 'Oynatılıyor...' : `${currentWeek}. Haftayı Oynat`}
@@ -1225,7 +1373,7 @@ export default function App() {
             
             {/* Header logo / Title */}
             <div className="flex flex-col items-center text-center space-y-3 mb-6">
-              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl shadow-sm border border-emerald-100/50">
+              <div className="p-3 bg-red-50 text-red-600 rounded-2xl shadow-sm border border-red-100/50">
                 <Trophy className="w-7 h-7" />
               </div>
               <div>
@@ -1250,7 +1398,7 @@ export default function App() {
                   value={loginUsername}
                   onChange={e => setLoginUsername(e.target.value)}
                   placeholder="admin"
-                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                 />
               </div>
 
@@ -1263,13 +1411,13 @@ export default function App() {
                   value={loginPassword}
                   onChange={e => setLoginPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs tracking-wide shadow-btn shadow-emerald-500/10 transition-colors mt-2"
+                className="w-full py-3 bg-red-500 hover:bg-red-600 text-slate-950 font-bold rounded-xl text-xs tracking-wide shadow-btn shadow-red-500/10 transition-colors mt-2"
               >
                 Giriş Yap
               </button>
@@ -1287,8 +1435,10 @@ export default function App() {
 
       {/* ================= MODAL: CHAMPION TROPHY modal ================= */}
       {champModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-md">
-          <div className="bg-white border border-slate-200 text-slate-800 rounded-3xl p-8 w-[450px] shadow-2xl max-w-md flex flex-col items-center text-center relative overflow-hidden">
+        <>
+          <Fireworks />
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/85 backdrop-blur-md">
+          <div className="bg-white border border-slate-200 text-slate-800 rounded-3xl p-8 w-[450px] shadow-2xl max-w-md flex flex-col items-center text-center relative overflow-hidden" style={{ zIndex: 52 }}>
             
             {/* Sparkle effects */}
             <div className="absolute right-0 top-0 w-36 h-36 bg-amber-400/10 rounded-full blur-3xl"></div>
@@ -1337,7 +1487,7 @@ export default function App() {
 
             <button
               onClick={handleResetSeason}
-              className="w-full mt-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-2xl text-xs tracking-wider transition-all duration-150 shadow-btn shadow-emerald-500/10 flex items-center justify-center"
+              className="w-full mt-6 py-3.5 bg-red-500 hover:bg-red-600 text-slate-950 font-bold rounded-2xl text-xs tracking-wider transition-all duration-150 shadow-btn shadow-red-500/10 flex items-center justify-center"
             >
               Yeni Sezon Başlat
             </button>
@@ -1350,6 +1500,7 @@ export default function App() {
             </button>
           </div>
         </div>
+        </>
       )}
 
       {/* ================= MODAL: TEAM ADD/EDIT FORM ================= */}
@@ -1360,7 +1511,7 @@ export default function App() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl shadow-sm border border-emerald-100/50">
+                <div className="p-2.5 bg-red-50 text-red-600 rounded-xl shadow-sm border border-red-100/50">
                   {isEditingTeam ? <Edit className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                 </div>
                 <div>
@@ -1393,7 +1544,7 @@ export default function App() {
                     value={teamForm.name}
                     onChange={e => setTeamForm({...teamForm, name: e.target.value})}
                     placeholder="Real Madrid"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                   />
                 </div>
 
@@ -1407,7 +1558,7 @@ export default function App() {
                     value={teamForm.shortName}
                     onChange={e => setTeamForm({...teamForm, shortName: e.target.value.toUpperCase()})}
                     placeholder="RM"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                   />
                 </div>
 
@@ -1419,7 +1570,7 @@ export default function App() {
                     required
                     value={teamForm.foundingYear}
                     onChange={e => setTeamForm({...teamForm, foundingYear: parseInt(e.target.value) || 2026})}
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                   />
                 </div>
 
@@ -1438,7 +1589,7 @@ export default function App() {
                       required
                       value={teamForm.primaryColor}
                       onChange={e => setTeamForm({...teamForm, primaryColor: e.target.value})}
-                      className="flex-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                      className="flex-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                     />
                   </div>
                 </div>
@@ -1451,7 +1602,7 @@ export default function App() {
                     value={teamForm.logoUrl}
                     onChange={e => setTeamForm({...teamForm, logoUrl: e.target.value})}
                     placeholder="https://example.com/logo.png"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                   />
                 </div>
 
@@ -1459,7 +1610,7 @@ export default function App() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Takım Gücü ({teamForm.power})</label>
-                    <span className="text-[10px] font-bold text-emerald-600">{teamForm.power}/100</span>
+                    <span className="text-[10px] font-bold text-red-600">{teamForm.power}/100</span>
                   </div>
                   <input 
                     type="range" 
@@ -1467,7 +1618,7 @@ export default function App() {
                     max={100}
                     value={teamForm.power}
                     onChange={e => setTeamForm({...teamForm, power: parseInt(e.target.value) || 75})}
-                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500 mt-3"
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-red-500 mt-3"
                   />
                 </div>
 
@@ -1479,7 +1630,7 @@ export default function App() {
                     value={teamForm.manager}
                     onChange={e => setTeamForm({...teamForm, manager: e.target.value})}
                     placeholder="Carlo Ancelotti"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                   />
                 </div>
 
@@ -1491,7 +1642,7 @@ export default function App() {
                     value={teamForm.stadium}
                     onChange={e => setTeamForm({...teamForm, stadium: e.target.value})}
                     placeholder="Santiago Bernabéu"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                   />
                 </div>
 
@@ -1503,7 +1654,7 @@ export default function App() {
                     value={teamForm.capacity}
                     onChange={e => setTeamForm({...teamForm, capacity: e.target.value})}
                     placeholder="85,000"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 shadow-sm transition-all"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                   />
                 </div>
 
@@ -1520,7 +1671,7 @@ export default function App() {
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition-colors duration-150 shadow-btn shadow-emerald-500/10"
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-slate-950 font-bold rounded-xl text-xs transition-colors duration-150 shadow-btn shadow-red-500/10"
                 >
                   <Save className="w-4 h-4" />
                   {isEditingTeam ? 'Değişiklikleri Kaydet' : 'Takım Ekle'}

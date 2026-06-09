@@ -290,12 +290,16 @@ function simulateMatch(homeTeam, awayTeam) {
   const powerDiff = rawPowerHome - rawPowerAway;
 
   // Base expected goals with power difference scaling (stronger team gets higher win probability)
-  const homeExpected = 1.3 + (powerDiff * 0.05) + Math.random() * 0.4;
-  const awayExpected = 1.1 - (powerDiff * 0.05) + Math.random() * 0.4;
+  let homeExpected = 1.35 + (powerDiff * 0.075);
+  let awayExpected = 1.15 - (powerDiff * 0.075);
   
-  // Calculate scores with moderate variance centered around the expectation
-  let homeScore = Math.round(homeExpected + (Math.random() - 0.5) * 1.2);
-  let awayScore = Math.round(awayExpected + (Math.random() - 0.5) * 1.2);
+  // Ensure expected goals don't drop below 0.2 to allow occasional goals even for weak teams
+  homeExpected = Math.max(0.2, homeExpected);
+  awayExpected = Math.max(0.2, awayExpected);
+  
+  // Calculate scores with variance centered around the expectation
+  let homeScore = Math.round(homeExpected + (Math.random() - 0.5) * 1.1);
+  let awayScore = Math.round(awayExpected + (Math.random() - 0.5) * 1.1);
   
   // Ensure scores are non-negative and cap at realistic limits
   homeScore = Math.max(0, Math.min(homeScore, 6));
