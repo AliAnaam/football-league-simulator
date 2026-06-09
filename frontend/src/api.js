@@ -1,4 +1,4 @@
-const API_BASE = 'https://football-simulator-api-7214.onrender.com/api';
+const API_BASE = 'https://football-simulator-api-72l4.onrender.com/api';
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`;
