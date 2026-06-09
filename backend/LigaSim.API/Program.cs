@@ -77,6 +77,22 @@ if (app.Environment.IsDevelopment() || true) // always enable Swagger for easy l
 
 app.UseCors("AllowAll");
 
+// Force ASP.NET Core to reply with a 200 OK to all OPTIONS preflight requests automatically
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.Headers["Access-Control-Allow-Origin"] = "https://football-league-simulator-six.vercel.app";
+        context.Response.Headers["Access-Control-Allow-Headers"] = "*";
+        context.Response.Headers["Access-Control-Allow-Methods"] = "*";
+        context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+        context.Response.StatusCode = 200;
+        await context.Response.WriteAsync("OK");
+        return;
+    }
+    await next();
+});
+
 app.UseAuthorization();
 
 app.MapControllers();
