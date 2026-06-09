@@ -51,13 +51,13 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<ISimulationService, SimulationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Configure CORS
+// Configure CORS - Standard Production Setup
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy.WithOrigins(
-                "https://football-league-simulator-six.vercel.app", 
+                "https://football-league-simulator-six.vercel.app",
                 "http://localhost:5173"
               )
               .AllowAnyMethod()
@@ -69,29 +69,16 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || true) // always enable Swagger for easy local exploration
+if (app.Environment.IsDevelopment() || true)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
+// ⚠️ CRITICAL MIDDLEWARE ORDERING:
+app.UseRouting();
 
-// Force ASP.NET Core to reply with a 200 OK to all OPTIONS preflight requests automatically
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.Headers["Access-Control-Allow-Origin"] = "https://football-league-simulator-six.vercel.app";
-        context.Response.Headers["Access-Control-Allow-Headers"] = "*";
-        context.Response.Headers["Access-Control-Allow-Methods"] = "*";
-        context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
-        context.Response.StatusCode = 200;
-        await context.Response.WriteAsync("OK");
-        return;
-    }
-    await next();
-});
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 

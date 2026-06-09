@@ -9,6 +9,7 @@ namespace LigaSim.API.Controllers;
 public class TeamsController(ITeamService teamService) : ControllerBase
 {
     [HttpGet]
+    [HttpOptions]
     public async Task<ActionResult<IEnumerable<TeamDto>>> GetAll()
     {
         var teams = await teamService.GetAllTeamsAsync();
