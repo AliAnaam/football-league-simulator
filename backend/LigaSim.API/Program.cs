@@ -7,6 +7,10 @@ using LigaSim.API.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Bind to Render's dynamically assigned PORT (falls back to 8080 for local dev)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://+:{port}");
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
