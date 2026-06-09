@@ -12,10 +12,33 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure SQLite DbContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=ligasim.db";
+// Configure Database Context (SQLite for local development, PostgreSQL for cloud)
 builder.Services.AddDbContext<LigaSimDbContext>(options =>
-    options.UseSqlite(connectionString));
+{
+    var envUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+    
+    if (string.IsNullOrEmpty(envUrl))
+    {
+        // 1. Local Mode: Keep using SQLite file
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=ligasim.db";
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        // 2. Cloud Mode: Parse the Neon connection string for PostgreSQL
+        var databaseUri = new Uri(envUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        var pgConnectionString = $"Host={databaseUri.Host};" +
+                                 $"Port={databaseUri.Port};" +
+                                 $"User Id={userInfo[0]};" +
+                                 $"Password={userInfo[1]};" +
+                                 $"Database={databaseUri.AbsolutePath.TrimStart('/')};" +
+                                 $"SSL Mode=Require;Trust Server Certificate=true;";
+
+        options.UseNpgsql(pgConnectionString);
+    }
+});
 
 // Register Repositories
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
