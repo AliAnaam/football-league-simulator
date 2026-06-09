@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: football-simulator-api
+    runtime: docker
+    dockerfilePath: ./backend/LigaSim.API/Dockerfile
+    dockerContext: ./backend/LigaSim.API
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+    healthCheckPath: /swagger/index.html
