@@ -26,16 +26,30 @@ public class TeamsController(ITeamService teamService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TeamDto>> Create(CreateTeamDto dto)
     {
-        var created = await teamService.CreateTeamAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        try
+        {
+            var created = await teamService.CreateTeamAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (System.ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult<TeamDto>> Update(int id, UpdateTeamDto dto)
     {
-        var updated = await teamService.UpdateTeamAsync(id, dto);
-        if (updated is null) return NotFound(new { message = $"Team with ID {id} not found." });
-        return Ok(updated);
+        try
+        {
+            var updated = await teamService.UpdateTeamAsync(id, dto);
+            if (updated is null) return NotFound(new { message = $"Team with ID {id} not found." });
+            return Ok(updated);
+        }
+        catch (System.ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id:int}")]

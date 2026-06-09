@@ -5,7 +5,11 @@ using LigaSim.API.Services.Interfaces;
 
 namespace LigaSim.API.Services;
 
-public class TeamService(ITeamRepository teamRepo) : ITeamService
+public class TeamService(
+    ITeamRepository teamRepo,
+    IMatchRepository matchRepo,
+    IScorerRepository scorerRepo,
+    IMatchService matchService) : ITeamService
 {
     public async Task<IEnumerable<TeamDto>> GetAllTeamsAsync()
     {
@@ -21,13 +25,35 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
 
     public async Task<TeamDto> CreateTeamAsync(CreateTeamDto dto)
     {
+        string nameTrimmed = dto.Name.Trim();
+        string shortNameTrimmed = dto.ShortName.Trim();
+
+        if (string.IsNullOrWhiteSpace(nameTrimmed))
+        {
+            throw new ArgumentException("Takım adı boş olamaz.");
+        }
+        if (string.IsNullOrWhiteSpace(shortNameTrimmed))
+        {
+            throw new ArgumentException("Takım kısaltması boş olamaz.");
+        }
+
+        var teams = await teamRepo.GetAllAsync();
+        if (teams.Any(t => t.Name.Trim().Equals(nameTrimmed, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ArgumentException($"'{nameTrimmed}' isimli bir takım zaten mevcut.");
+        }
+        if (teams.Any(t => t.ShortName.Trim().Equals(shortNameTrimmed, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ArgumentException($"'{shortNameTrimmed}' kısaltmalı bir takım zaten mevcut.");
+        }
+
         // Simple mapping from hex code to some tailwind classes for the logo color
         string logoColor = GetLogoColorFromHex(dto.PrimaryColor);
 
         var team = new Team
         {
-            Name = dto.Name,
-            ShortName = dto.ShortName,
+            Name = nameTrimmed,
+            ShortName = shortNameTrimmed,
             FoundingYear = dto.FoundingYear,
             PrimaryColor = dto.PrimaryColor,
             LogoUrl = dto.LogoUrl,
@@ -48,8 +74,30 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
         var team = await teamRepo.GetByIdAsync(id);
         if (team is null) return null;
 
-        team.Name = dto.Name;
-        team.ShortName = dto.ShortName;
+        string nameTrimmed = dto.Name.Trim();
+        string shortNameTrimmed = dto.ShortName.Trim();
+
+        if (string.IsNullOrWhiteSpace(nameTrimmed))
+        {
+            throw new ArgumentException("Takım adı boş olamaz.");
+        }
+        if (string.IsNullOrWhiteSpace(shortNameTrimmed))
+        {
+            throw new ArgumentException("Takım kısaltması boş olamaz.");
+        }
+
+        var teams = await teamRepo.GetAllAsync();
+        if (teams.Any(t => t.Id != id && t.Name.Trim().Equals(nameTrimmed, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ArgumentException($"'{nameTrimmed}' isimli bir takım zaten mevcut.");
+        }
+        if (teams.Any(t => t.Id != id && t.ShortName.Trim().Equals(shortNameTrimmed, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ArgumentException($"'{shortNameTrimmed}' kısaltmalı bir takım zaten mevcut.");
+        }
+
+        team.Name = nameTrimmed;
+        team.ShortName = shortNameTrimmed;
         team.FoundingYear = dto.FoundingYear;
         team.PrimaryColor = dto.PrimaryColor;
         team.LogoUrl = dto.LogoUrl;
@@ -65,7 +113,25 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
 
     public async Task<bool> DeleteTeamAsync(int id)
     {
-        return await teamRepo.DeleteAsync(id);
+        // 1. Delete all matches and scorers first (to avoid foreign key constraint violations)
+        await matchRepo.DeleteAllAsync();
+        await scorerRepo.ResetAllAsync();
+
+        // 2. Delete the team
+        var deleted = await teamRepo.DeleteAsync(id);
+        if (!deleted) return false;
+
+        // 3. Reset stats for remaining teams
+        var teams = await teamRepo.GetAllAsync();
+        foreach (var t in teams)
+        {
+            t.Morale = 50;
+            await teamRepo.UpdateAsync(t);
+        }
+
+        // 4. Generate new fixtures for the remaining teams
+        await matchService.GenerateFixturesAsync();
+        return true;
     }
 
     private static TeamDto MapToDto(Team team) =>

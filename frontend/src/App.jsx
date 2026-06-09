@@ -207,7 +207,7 @@ function Fireworks() {
 export default function App() {
   // Navigation & Auth
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('isAdmin') === 'true');
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -298,6 +298,7 @@ export default function App() {
     try {
       const res = await api.login(loginUsername, loginPassword);
       if (res.success) {
+        localStorage.setItem('isAdmin', 'true');
         setIsAdmin(true);
         setLoginModalOpen(false);
         setLoginUsername('');
@@ -310,6 +311,7 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('isAdmin');
     setIsAdmin(false);
     playClick();
   };
@@ -591,10 +593,6 @@ export default function App() {
               Yönetici Girişi
             </button>
           )}
-
-          <div className="text-center text-[10px] text-slate-500 font-medium">
-            LigaSim Pro v2.0 &copy; 2026
-          </div>
         </div>
       </aside>
 
