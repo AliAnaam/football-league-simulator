@@ -1,0 +1,12 @@
+# Ignore compiler output and IDE folders
+bin/
+obj/
+node_modules/
+.git/
+.github/
+.vscode/
+frontend/
+backend/LigaSim.API/bin/
+backend/LigaSim.API/obj/
+*.db
+*.db-journal

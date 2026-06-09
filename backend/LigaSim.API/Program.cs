@@ -7,9 +7,14 @@ using LigaSim.API.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Bind to Render's dynamically assigned PORT (falls back to 8080 for local dev)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://+:{port}");
+// Bind to both port 8080 (Docker EXPOSE) and Render's dynamic PORT to prevent port mismatches
+var urls = new List<string> { "http://+:8080" };
+var customPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(customPort) && customPort != "8080")
+{
+    urls.Add($"http://+:{customPort}");
+}
+builder.WebHost.UseUrls(urls.ToArray());
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -29,18 +34,35 @@ builder.Services.AddDbContext<LigaSimDbContext>(options =>
     }
     else
     {
-        // 2. Cloud Mode: Parse the Neon connection string for PostgreSQL
-        var databaseUri = new Uri(envUrl);
-        var userInfo = databaseUri.UserInfo.Split(':');
+        // 2. Cloud Mode: Parse the Neon/Render connection string for PostgreSQL robustly
+        try
+        {
+            string pgConnectionString;
+            if (envUrl.StartsWith("postgres://") || envUrl.StartsWith("postgresql://"))
+            {
+                var databaseUri = new Uri(envUrl);
+                var userInfo = databaseUri.UserInfo.Split(':');
+                var user = Uri.UnescapeDataString(userInfo[0]);
+                var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+                var host = databaseUri.Host;
+                var portStr = databaseUri.Port == -1 ? "5432" : databaseUri.Port.ToString();
+                var database = databaseUri.AbsolutePath.TrimStart('/');
 
-        var pgConnectionString = $"Host={databaseUri.Host};" +
-                                 $"Port={databaseUri.Port};" +
-                                 $"User Id={userInfo[0]};" +
-                                 $"Password={userInfo[1]};" +
-                                 $"Database={databaseUri.AbsolutePath.TrimStart('/')};" +
-                                 $"SSL Mode=Require;Trust Server Certificate=true;";
+                pgConnectionString = $"Host={host};Port={portStr};Database={database};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true;";
+            }
+            else
+            {
+                pgConnectionString = envUrl;
+            }
 
-        options.UseNpgsql(pgConnectionString);
+            options.UseNpgsql(pgConnectionString);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}. Falling back to SQLite.");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=ligasim.db";
+            options.UseSqlite(connectionString);
+        }
     }
 });
 
