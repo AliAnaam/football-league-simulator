@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://football-simulator-api-7214.onrender.com/api';
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`;
