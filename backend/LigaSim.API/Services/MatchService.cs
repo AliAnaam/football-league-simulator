@@ -63,9 +63,9 @@ public class MatchService(
         // Ensure even number of teams (dummy bye = -1)
         var tempIds = shuffledTeamIds.Count % 2 == 0 ? [.. shuffledTeamIds] : new List<int>([.. shuffledTeamIds, -1]);
         int n = tempIds.Count;
+        int totalMatches = (int)Math.Ceiling(teams.Count / 2.0);
 
-        var dates = new[] { "CUM 14", "CMT 15", "CMT 15", "CMT 15", "PAZ 16", "PAZ 16", "PAZ 16", "PAZ 16", "PZT 17" };
-        var times = new[] { "21:00", "14:00", "16:15", "18:30", "21:00", "14:00", "16:15", "18:30", "21:00" };
+        var times = new[] { "21:00", "14:00", "16:15", "18:30", "21:00", "14:00", "16:15", "18:30", "21:00", "21:00" };
 
         var weeks = new List<List<Match>>();
 
@@ -85,7 +85,28 @@ public class MatchService(
 
                 if (homeId == -1 || awayId == -1) continue;
 
-                string date = dates[i % dates.Length];
+                string date;
+                if (i == totalMatches - 1)
+                {
+                    date = "SAL";
+                }
+                else if (i == 0)
+                {
+                    date = "CUM";
+                }
+                else if (i >= 1 && i <= 3)
+                {
+                    date = "CMT";
+                }
+                else if (i >= 4 && i <= 7)
+                {
+                    date = "PAZ";
+                }
+                else
+                {
+                    date = "PZT";
+                }
+
                 string time = times[i % times.Length];
 
                 weekMatches.Add(new Match

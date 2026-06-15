@@ -254,12 +254,18 @@ function generateFixtures() {
 }
 
 function getMatchDate(index) {
-  const dates = ['CUM 14', 'CMT 15', 'CMT 15', 'CMT 15', 'PAZ 16', 'PAZ 16', 'PAZ 16', 'PAZ 16', 'PZT 17'];
-  return dates[index % dates.length];
+  const totalMatches = Math.ceil(STATE.teams.length / 2);
+  if (index === totalMatches - 1) {
+    return 'SAL';
+  }
+  if (index === 0) return 'CUM';
+  if (index >= 1 && index <= 3) return 'CMT';
+  if (index >= 4 && index <= 7) return 'PAZ';
+  return 'PZT';
 }
 
 function getMatchTime(index) {
-  const times = ['21:00', '14:00', '16:15', '18:30', '21:00', '14:00', '16:15', '18:30', '21:00'];
+  const times = ['21:00', '14:00', '16:15', '18:30', '21:00', '14:00', '16:15', '18:30', '21:00', '21:00'];
   return times[index % times.length];
 }
 
