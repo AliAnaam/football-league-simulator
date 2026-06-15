@@ -463,7 +463,7 @@ export default function App() {
   };
 
   const handleStartNewSeason = async () => {
-    if (window.confirm("Yeni bir sezon başlatmak istiyor musunuz? Fikstürler yeniden oluşturulacaktır.")) {
+    if (window.confirm("Yeni bir sezon başlatmak istiyor musunuz?")) {
       try {
         await api.generateFixtures();
         setSimLogs([]);
