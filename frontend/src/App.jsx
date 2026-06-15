@@ -430,7 +430,7 @@ export default function App() {
     try {
       const res = await api.simulateRemaining();
       
-      const matchLogs = res.results.map(m => `⚽ [Hafta ${res.week}] ${m.homeTeam} ${m.homeScore} - ${m.awayScore} ${m.awayTeam}`);
+      const matchLogs = res.results.map(m => `⚽ ${m.homeTeam} ${m.homeScore} - ${m.awayScore} ${m.awayTeam}`);
       setSimLogs(prev => [...matchLogs, ...prev]);
 
       await loadData();
