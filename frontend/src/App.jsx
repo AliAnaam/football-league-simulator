@@ -853,7 +853,7 @@ export default function App() {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>
-                      <span className="text-slate-500">Küme Düşme (16–18)</span>
+                      <span className="text-slate-500">Küme Düşme (18–20)</span>
                     </div>
                   </div>
                 </div>
@@ -1292,7 +1292,7 @@ export default function App() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded bg-rose-500 shadow-sm"></span>
-                  <span className="text-slate-600">Küme Düşme (16–18)</span>
+                  <span className="text-slate-600">Küme Düşme (18–20)</span>
                 </div>
               </div>
             </div>

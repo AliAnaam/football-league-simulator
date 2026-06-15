@@ -1608,7 +1608,7 @@ function renderSupport() {
           Orijinal LaLiga lig tablosuna uygun olarak sol kenarda renkli bölge sınırları yer alır:
           <br><strong class="text-emerald-500">Yeşil Çizgi (1 - 4. sıralar):</strong> Şampiyonlar Ligi'ne katılım barajı.
           <br><strong class="text-blue-500">Mavi Çizgi (5 - 6. sıralar):</strong> Avrupa Ligi'ne katılım barajı.
-          <br><strong class="text-red-500">Kırmızı Çizgi (16 - 18. sıralar):</strong> Küme Düşme hattı.
+          <br><strong class="text-red-500">Kırmızı Çizgi (18 - 20. sıralar):</strong> Küme Düşme hattı.
         </p>
       </div>
 
