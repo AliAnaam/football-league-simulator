@@ -331,9 +331,11 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('isAdmin');
-    setIsAdmin(false);
-    playClick();
+    if (window.confirm("Oturumu kapatmak istediğinizden emin misiniz?")) {
+      localStorage.removeItem('isAdmin');
+      setIsAdmin(false);
+      playClick();
+    }
   };
 
   // Team CRUD Handling

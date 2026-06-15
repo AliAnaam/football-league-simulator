@@ -2390,23 +2390,25 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
 
 // Logout handler
 document.getElementById("logout-btn").addEventListener("click", () => {
-  SOUNDS.playClick();
-  localStorage.removeItem("ligasim_logged_in");
-  sessionStorage.removeItem("ligasim_logged_in");
-  
-  const appLayout = document.getElementById("app-layout");
-  const loginPage = document.getElementById("login-page");
-  
-  appLayout.classList.add("logged-out");
-  loginPage.style.opacity = "0";
-  loginPage.style.transform = "scale(1.05)";
-  loginPage.classList.remove("hidden");
-  loginPage.classList.add("flex");
-  
-  setTimeout(() => {
-    loginPage.style.opacity = "1";
-    loginPage.style.transform = "scale(1)";
-  }, 50);
+  if (confirm("Oturumu kapatmak istediğinizden emin misiniz?")) {
+    SOUNDS.playClick();
+    localStorage.removeItem("ligasim_logged_in");
+    sessionStorage.removeItem("ligasim_logged_in");
+    
+    const appLayout = document.getElementById("app-layout");
+    const loginPage = document.getElementById("login-page");
+    
+    appLayout.classList.add("logged-out");
+    loginPage.style.opacity = "0";
+    loginPage.style.transform = "scale(1.05)";
+    loginPage.classList.remove("hidden");
+    loginPage.classList.add("flex");
+    
+    setTimeout(() => {
+      loginPage.style.opacity = "1";
+      loginPage.style.transform = "scale(1)";
+    }, 50);
+  }
 });
 
 // ================= BOOTSTRAP INITIALIZATION =================
