@@ -449,7 +449,7 @@ export default function App() {
   };
 
   const handleResetSeason = async () => {
-    if (window.confirm("Tüm sezonu ve gol istatistiklerini sıfırlamak istiyor musunuz? Fikstürler korunacaktır.")) {
+    if (window.confirm("Tüm sezonu ve gol istatistiklerini sıfırlamak istiyor musunuz?")) {
       try {
         await api.resetSeason();
         setSimLogs([]);
