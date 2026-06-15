@@ -18,4 +18,15 @@ public class AuthController(IAuthService authService) : ControllerBase
         }
         return Ok(response);
     }
+
+    [HttpPost("register")]
+    public async Task<ActionResult<LoginResponseDto>> Register(RegisterDto registerDto)
+    {
+        var response = await authService.RegisterAsync(registerDto);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+        return Ok(response);
+    }
 }

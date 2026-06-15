@@ -200,7 +200,7 @@
           <i data-lucide="trophy" class="w-7 h-7"></i>
         </div>
         <h2 class="text-2xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-emerald-600 to-indigo-600 bg-clip-text text-transparent">LigaSim Pro</h2>
-        <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2">LaLiga Yönetim Sistemi</p>
+        <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2" id="login-subtitle">LaLiga Yönetim Sistemi</p>
       </div>
 
       <!-- Login Form -->
@@ -215,7 +215,7 @@
         <div class="space-y-1.5">
           <label for="username" class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">Kullanıcı Adı</label>
           <div class="relative group">
-            <input type="text" id="username" name="username" required value="admin"
+            <input type="text" id="username" name="username" required
                    class="w-full bg-slate-100/60 border border-slate-200 focus:bg-white focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/20 text-xs text-slate-800 pl-10 pr-4 py-3.5 rounded-xl outline-none transition-all placeholder-slate-400 font-semibold shadow-inner"
                    placeholder="Kullanıcı adınızı girin">
             <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-emerald-500 transition-colors"></i>
@@ -229,7 +229,7 @@
             <a href="#" id="forgot-password" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-500 transition-colors">Şifremi Unuttum?</a>
           </div>
           <div class="relative group">
-            <input type="password" id="password" name="password" required value="admin123"
+            <input type="password" id="password" name="password" required
                    class="w-full bg-slate-100/60 border border-slate-200 focus:bg-white focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/20 text-xs text-slate-800 pl-10 pr-10 py-3.5 rounded-xl outline-none transition-all placeholder-slate-400 font-semibold shadow-inner"
                    placeholder="Şifrenizi girin">
             <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-emerald-500 transition-colors"></i>
@@ -251,7 +251,7 @@
         <!-- Submit Button -->
         <button type="submit" id="login-submit-btn"
                 class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 active:scale-[0.99] hover-scale text-white font-extrabold text-xs py-4 rounded-xl shadow-lg shadow-emerald-500/15 border border-emerald-400/10 cursor-pointer flex items-center justify-center gap-2 group transition-all duration-300 mt-2">
-          <span>Sisteme Giriş Yap</span>
+          <span id="submit-btn-text">Sisteme Giriş Yap</span>
           <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
         </button>
       </form>
@@ -278,12 +278,11 @@
         </div>
       </div>
 
-      <!-- Demo Account Notice -->
-      <div class="mt-6 text-center">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-[10px] text-slate-600 font-semibold select-none">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-          Demo Girişi: admin / admin123
-        </span>
+      <!-- Signup Toggle Link -->
+      <div class="mt-6 text-center border-t border-slate-200/80 pt-4">
+        <button type="button" id="toggle-signup-mode-btn" class="text-xs text-emerald-600 hover:text-emerald-500 font-bold transition-colors cursor-pointer bg-transparent border-0 outline-none">
+          Yeni yönetici hesabı oluşturun
+        </button>
       </div>
 
     </div>

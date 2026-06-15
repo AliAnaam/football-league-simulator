@@ -211,6 +211,7 @@ export default function App() {
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
 
   // App State
   const [teams, setTeams] = useState([]);
@@ -296,14 +297,33 @@ export default function App() {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await api.login(loginUsername, loginPassword);
-      if (res.success) {
-        localStorage.setItem('isAdmin', 'true');
-        setIsAdmin(true);
-        setLoginModalOpen(false);
-        setLoginUsername('');
-        setLoginPassword('');
-        playClick();
+      if (isSignUp) {
+        // Register new admin
+        const regRes = await api.register(loginUsername, loginPassword);
+        if (regRes.success) {
+          // Auto login after successful signup
+          const loginRes = await api.login(loginUsername, loginPassword);
+          if (loginRes.success) {
+            localStorage.setItem('isAdmin', 'true');
+            setIsAdmin(true);
+            setLoginModalOpen(false);
+            setLoginUsername('');
+            setLoginPassword('');
+            setIsSignUp(false);
+            playClick();
+          }
+        }
+      } else {
+        // Normal login
+        const res = await api.login(loginUsername, loginPassword);
+        if (res.success) {
+          localStorage.setItem('isAdmin', 'true');
+          setIsAdmin(true);
+          setLoginModalOpen(false);
+          setLoginUsername('');
+          setLoginPassword('');
+          playClick();
+        }
       }
     } catch (err) {
       setLoginError(err.message || 'Hatalı şifre veya kullanıcı adı.');
@@ -949,7 +969,7 @@ export default function App() {
                     <Info className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <span className="font-bold block mb-0.5 text-red-950">Yönetici Yetkisi Gerekli</span>
-                      Yeni takımlar eklemek, mevcut takımları düzenlemek veya silmek için sol alttaki <strong>Yönetici Girişi</strong> butonundan oturum açabilirsiniz (admin / admin123).
+                      Yeni takımlar eklemek, mevcut takımları düzenlemek veya silmek için sol alttaki <strong>Yönetici Girişi</strong> butonundan oturum açabilirsiniz.
                     </div>
                   </div>
                 </div>
@@ -1375,8 +1395,12 @@ export default function App() {
                 <Trophy className="w-7 h-7" />
               </div>
               <div>
-                <h3 className="font-extrabold text-xl text-slate-900 tracking-tight">Yönetici Oturumu</h3>
-                <p className="text-xs text-slate-400 font-semibold mt-0.5">LaLiga Sim Pro kontrol panelini açın</p>
+                <h3 className="font-extrabold text-xl text-slate-900 tracking-tight">
+                  {isSignUp ? 'Yeni Yönetici Kaydı' : 'Yönetici Oturumu'}
+                </h3>
+                <p className="text-xs text-slate-400 font-semibold mt-0.5">
+                  {isSignUp ? 'Sistem yöneticisi olarak kaydolun' : 'LaLiga Sim Pro kontrol panelini açın'}
+                </p>
               </div>
             </div>
 
@@ -1395,7 +1419,7 @@ export default function App() {
                   required
                   value={loginUsername}
                   onChange={e => setLoginUsername(e.target.value)}
-                  placeholder="admin"
+                  placeholder={isSignUp ? "Yeni kullanıcı adı" : "Kullanıcı adı"}
                   className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 shadow-sm transition-all"
                 />
               </div>
@@ -1417,12 +1441,22 @@ export default function App() {
                 type="submit"
                 className="w-full py-3 bg-red-500 hover:bg-red-600 text-slate-950 font-bold rounded-xl text-xs tracking-wide shadow-btn shadow-red-500/10 transition-colors mt-2"
               >
-                Giriş Yap
+                {isSignUp ? 'Kayıt Ol ve Giriş Yap' : 'Giriş Yap'}
               </button>
             </form>
 
+            <div className="text-center mt-4 pt-3 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => { setIsSignUp(!isSignUp); setLoginError(''); playClick(); }}
+                className="text-xs text-red-600 hover:text-red-700 font-bold transition-colors"
+              >
+                {isSignUp ? 'Zaten hesabınız var mı? Giriş yapın' : 'Yeni yönetici hesabı oluşturun'}
+              </button>
+            </div>
+
             <button 
-              onClick={() => { setLoginModalOpen(false); playClick(); }}
+              onClick={() => { setLoginModalOpen(false); setIsSignUp(false); setLoginError(''); playClick(); }}
               className="absolute right-4 top-4 p-1 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
             >
               <X className="w-5 h-5" />

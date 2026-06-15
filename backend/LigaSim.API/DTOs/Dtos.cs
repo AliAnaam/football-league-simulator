@@ -103,6 +103,7 @@ public record MatchResultDto(
 // ─── Auth DTOs ────────────────────────────────────────────────────────────────
 
 public record LoginDto(string Username, string Password);
+public record RegisterDto(string Username, string Password);
 public record LoginResponseDto(bool Success, string Message);
 
 // ─── Scorer DTOs ──────────────────────────────────────────────────────────────

@@ -8,6 +8,7 @@ public class LigaSimDbContext(DbContextOptions<LigaSimDbContext> options) : DbCo
     public DbSet<Team> Teams => Set<Team>();
     public DbSet<Match> Matches => Set<Match>();
     public DbSet<Scorer> Scorers => Set<Scorer>();
+    public DbSet<Admin> Admins => Set<Admin>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

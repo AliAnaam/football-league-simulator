@@ -54,4 +54,8 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({ username, password })
   }),
+  register: (username, password) => request('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ username, password })
+  }),
 };

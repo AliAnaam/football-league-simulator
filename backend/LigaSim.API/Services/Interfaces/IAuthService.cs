@@ -5,4 +5,5 @@ namespace LigaSim.API.Services.Interfaces;
 public interface IAuthService
 {
     Task<LoginResponseDto> LoginAsync(LoginDto loginDto);
+    Task<LoginResponseDto> RegisterAsync(RegisterDto registerDto);
 }

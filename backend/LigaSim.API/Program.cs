@@ -4,6 +4,7 @@ using LigaSim.API.Repositories;
 using LigaSim.API.Repositories.Interfaces;
 using LigaSim.API.Services;
 using LigaSim.API.Services.Interfaces;
+using LigaSim.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -118,6 +119,24 @@ using (var scope = app.Services.CreateScope())
     {
         var db = services.GetRequiredService<LigaSimDbContext>();
         db.Database.EnsureCreated(); // Ensure DB is created with seed data
+
+        // Ensure Admins table exists (raw SQL backup for existing databases)
+        var isPostgreSql = db.Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL";
+        string createTableSql = isPostgreSql 
+            ? "CREATE TABLE IF NOT EXISTS \"Admins\" (\"Id\" SERIAL PRIMARY KEY, \"Username\" TEXT NOT NULL, \"PasswordHash\" TEXT NOT NULL);"
+            : "CREATE TABLE IF NOT EXISTS \"Admins\" (\"Id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"Username\" TEXT NOT NULL, \"PasswordHash\" TEXT NOT NULL);";
+        db.Database.ExecuteSqlRaw(createTableSql);
+
+        // Seed default admin if table is empty
+        if (!db.Admins.Any())
+        {
+            db.Admins.Add(new Admin
+            {
+                Username = "admin",
+                PasswordHash = PasswordHasher.HashPassword("admin123")
+            });
+            db.SaveChanges();
+        }
 
         // Generate initial fixtures if none exist
         var matchService = services.GetRequiredService<IMatchService>();

@@ -2244,6 +2244,53 @@ document.getElementById("toggle-password").addEventListener("click", () => {
   lucide.createIcons();
 });
 
+// Auth Signup vs Login State
+let legacyIsSignUp = false;
+
+function getLegacyAdmins() {
+  let admins = localStorage.getItem("ligasim_admins");
+  if (!admins) {
+    // Seed default admin accounts
+    admins = JSON.stringify([{ username: "admin", password: "admin123" }]);
+    localStorage.setItem("ligasim_admins", admins);
+  }
+  return JSON.parse(admins);
+}
+
+function saveLegacyAdmin(username, password) {
+  const admins = getLegacyAdmins();
+  admins.push({ username, password });
+  localStorage.setItem("ligasim_admins", JSON.stringify(admins));
+}
+
+// Handle Signup/Login mode toggle
+const toggleSignUpBtn = document.getElementById("toggle-signup-mode-btn");
+if (toggleSignUpBtn) {
+  toggleSignUpBtn.addEventListener("click", () => {
+    legacyIsSignUp = !legacyIsSignUp;
+    SOUNDS.playClick();
+    
+    const subtitle = document.getElementById("login-subtitle");
+    const submitBtnText = document.getElementById("submit-btn-text");
+    const usernameInput = document.getElementById("username");
+    const errorAlert = document.getElementById("login-error");
+    
+    errorAlert.classList.add("hidden");
+    
+    if (legacyIsSignUp) {
+      subtitle.innerText = "Yeni Yönetici Kaydı";
+      submitBtnText.innerText = "Kayıt Ol ve Giriş Yap";
+      toggleSignUpBtn.innerText = "Zaten hesabınız var mı? Giriş yapın";
+      usernameInput.placeholder = "Yeni kullanıcı adı girin";
+    } else {
+      subtitle.innerText = "LaLiga Yönetim Sistemi";
+      submitBtnText.innerText = "Sisteme Giriş Yap";
+      toggleSignUpBtn.innerText = "Yeni yönetici hesabı oluşturun";
+      usernameInput.placeholder = "Kullanıcı adınızı girin";
+    }
+  });
+}
+
 // Login form submit handler
 document.getElementById("login-form").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -2251,6 +2298,7 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
   const user = document.getElementById("username").value.trim();
   const pass = document.getElementById("password").value.trim();
   const errorAlert = document.getElementById("login-error");
+  const errorMsg = document.getElementById("login-error-msg");
   const submitBtn = document.getElementById("login-submit-btn");
 
   // Premium submit loading state
@@ -2258,11 +2306,42 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
   submitBtn.disabled = true;
   submitBtn.innerHTML = `
     <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-    <span>Doğrulanıyor...</span>
+    <span>${legacyIsSignUp ? 'Kaydediliyor...' : 'Doğrulanıyor...'}</span>
   `;
 
   setTimeout(() => {
-    if (user === "admin" && pass === "admin123") {
+    const admins = getLegacyAdmins();
+    
+    if (legacyIsSignUp) {
+      // Check if username taken
+      const exists = admins.some(a => a.username.toLowerCase() === user.toLowerCase());
+      if (exists) {
+        SOUNDS.playClick();
+        errorMsg.innerText = "Bu kullanıcı adı zaten alınmış!";
+        errorAlert.classList.remove("hidden");
+        errorAlert.classList.add("animate-shake");
+        setTimeout(() => errorAlert.classList.remove("animate-shake"), 500);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHTML;
+        return;
+      }
+      
+      // Save new admin and switch mode back to normal
+      saveLegacyAdmin(user, pass);
+      legacyIsSignUp = false;
+      if (toggleSignUpBtn) {
+        toggleSignUpBtn.innerText = "Yeni yönetici hesabı oluşturun";
+      }
+      document.getElementById("login-subtitle").innerText = "LaLiga Yönetim Sistemi";
+      document.getElementById("submit-btn-text").innerText = "Sisteme Giriş Yap";
+      document.getElementById("username").placeholder = "Kullanıcı adınızı girin";
+    }
+
+    // Attempt login verification
+    const currentAdmins = getLegacyAdmins();
+    const isValid = currentAdmins.some(a => a.username.toLowerCase() === user.toLowerCase() && a.password === pass);
+
+    if (isValid) {
       errorAlert.classList.add("hidden");
       
       // Play celebratory chime sound
@@ -2285,6 +2364,8 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
         checkAuth(false);
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnHTML;
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
         lucide.createIcons();
       }, 800);
       
@@ -2292,6 +2373,7 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
       // Play click/error sound
       SOUNDS.playClick();
       
+      errorMsg.innerText = "Hatalı kullanıcı adı veya şifre!";
       errorAlert.classList.remove("hidden");
       errorAlert.classList.add("animate-shake");
       
