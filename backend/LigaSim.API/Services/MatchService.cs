@@ -128,8 +128,17 @@ public class MatchService(
 
     public async Task ResetSeasonAsync()
     {
-        // Delete all matches and scorers
-        await matchRepo.DeleteAllAsync();
+        // Reset all existing matches (clear scores, played = false)
+        var matches = await matchRepo.GetAllAsync();
+        foreach (var match in matches)
+        {
+            match.HomeScore = null;
+            match.AwayScore = null;
+            match.Played = false;
+            await matchRepo.UpdateAsync(match);
+        }
+
+        // Reset scorers
         await scorerRepo.ResetAllAsync();
 
         // Reset all team stats and morale
@@ -139,9 +148,6 @@ public class MatchService(
             team.Morale = 50;
             await teamRepo.UpdateAsync(team);
         }
-
-        // Regenerate fixtures
-        await GenerateFixturesAsync();
     }
 
     private static MatchDto MapToDto(Match match) =>

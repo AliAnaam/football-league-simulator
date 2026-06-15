@@ -1957,7 +1957,7 @@ function closeCelebration(btn) {
   btn.closest(".fixed").remove();
 }
 
-function resetSimulation() {
+function resetSimulation(shuffleFixtures = false) {
   SOUNDS.playWhistle(400, 0.25);
   if (!confirm("Tüm lig verilerini sıfırlamak ve 1. haftadan başlamak istediğinizden emin misiniz?")) return;
   
@@ -1983,19 +1983,31 @@ function resetSimulation() {
   // Reset scorers to empty (fresh season)
   STATE.scorers = [];
   
+  if (shuffleFixtures) {
+    generateFixtures();
+  } else {
+    // Keep same fixtures but clear goals/played status
+    STATE.fixtures.forEach(week => {
+      week.forEach(match => {
+        match.homeScore = null;
+        match.awayScore = null;
+        match.played = false;
+      });
+    });
+  }
+  
   sortStandings();
-  generateFixtures();
   updateNavbarIndicators();
   
   const activeNav = document.querySelector(".nav-active");
   if (activeNav) navigateTo(activeNav.id);
 }
 
-// New Season: resets stats, keeps teams as-is
+// New Season: resets stats, shuffles fixtures
 function startNewSeason() {
   // Close any open celebration modal first
   document.querySelectorAll('.fixed.bg-slate-900\/80').forEach(el => el.remove());
-  resetSimulation();
+  resetSimulation(true);
 }
 
 function toggleSound(checked) {

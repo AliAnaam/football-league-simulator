@@ -449,9 +449,23 @@ export default function App() {
   };
 
   const handleResetSeason = async () => {
-    if (window.confirm("Tüm sezonu ve gol istatistiklerini sıfırlamak istiyor musunuz?")) {
+    if (window.confirm("Tüm sezonu ve gol istatistiklerini sıfırlamak istiyor musunuz? Fikstürler korunacaktır.")) {
       try {
         await api.resetSeason();
+        setSimLogs([]);
+        setChampModalOpen(false);
+        await loadData();
+        playClick();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+  };
+
+  const handleStartNewSeason = async () => {
+    if (window.confirm("Yeni bir sezon başlatmak istiyor musunuz? Fikstürler yeniden oluşturulacaktır.")) {
+      try {
+        await api.generateFixtures();
         setSimLogs([]);
         setChampModalOpen(false);
         await loadData();
@@ -650,7 +664,7 @@ export default function App() {
           {/* Quick controls */}
           <div className="flex items-center gap-3">
             <button
-              onClick={handleResetSeason}
+              onClick={handleStartNewSeason}
               className="px-4 py-2 border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-600 hover:text-rose-600 rounded-xl text-xs font-semibold transition-all duration-150"
             >
               Yeni Sezon Başlat
