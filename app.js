@@ -2110,8 +2110,12 @@ function updateNavbarIndicators() {
 
 // ================= SPA NAVIGATION ENGINE =================
 
-function navigateTo(navId) {
-  SOUNDS.playClick();
+function navigateTo(navId, skipSound = false) {
+  if (!skipSound) {
+    SOUNDS.playClick();
+  }
+  
+  localStorage.setItem('vanilla_active_nav', navId);
   
   // Remove nav-active from all items
   const menuItems = document.querySelectorAll("aside nav a");
@@ -2427,8 +2431,9 @@ window.addEventListener("DOMContentLoaded", () => {
   // Verify auth state immediately (initial load)
   checkAuth(true);
   
-  // Render initial homepage
-  renderHome();
+  // Render initial homepage or saved page
+  const savedNav = localStorage.getItem('vanilla_active_nav') || 'nav-home';
+  navigateTo(savedNav, true);
   
   // Set up Lucide icons
   lucide.createIcons();

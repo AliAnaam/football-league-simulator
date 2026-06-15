@@ -205,8 +205,15 @@ function Fireworks() {
 }
 
 export default function App() {
-  // Navigation & Auth
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    const saved = localStorage.getItem('activeTab');
+    return ['dashboard', 'teams', 'fixtures', 'standings', 'simulation'].includes(saved) ? saved : 'dashboard';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('isAdmin') === 'true');
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
