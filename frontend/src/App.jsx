@@ -624,7 +624,7 @@ export default function App() {
         {/* Main Content Header */}
         <header className="h-20 bg-white border-b border-slate-200/80 px-8 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-slate-900 uppercase tracking-tight">
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight">
               {activeTab === 'dashboard' && 'Genel Bakış'}
               {activeTab === 'teams' && 'Takım Yönetimi'}
               {activeTab === 'fixtures' && 'Sezon Fikstürleri'}
