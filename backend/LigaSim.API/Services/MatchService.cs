@@ -56,8 +56,12 @@ public class MatchService(
 
         var teamIds = teams.Select(t => t.Id).ToList();
         
+        // Shuffle teamIds to randomize matchups on every reset
+        var rng = new Random();
+        var shuffledTeamIds = teamIds.OrderBy(_ => rng.Next()).ToList();
+        
         // Ensure even number of teams (dummy bye = -1)
-        var tempIds = teamIds.Count % 2 == 0 ? [.. teamIds] : new List<int>([.. teamIds, -1]);
+        var tempIds = shuffledTeamIds.Count % 2 == 0 ? [.. shuffledTeamIds] : new List<int>([.. shuffledTeamIds, -1]);
         int n = tempIds.Count;
 
         var dates = new[] { "CUM 14", "CMT 15", "CMT 15", "CMT 15", "PAZ 16", "PAZ 16", "PAZ 16", "PAZ 16", "PZT 17" };

@@ -199,6 +199,13 @@ const SOUNDS = {
  */
 function generateFixtures() {
   const teamIds = STATE.teams.map(t => t.id);
+  
+  // Shuffle teamIds to randomize matchups on every reset
+  for (let i = teamIds.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [teamIds[i], teamIds[j]] = [teamIds[j], teamIds[i]];
+  }
+  
   const numTeams = teamIds.length;
   
   // Ensure even number of teams (add a dummy BYE if needed)
