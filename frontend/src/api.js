@@ -21,7 +21,7 @@ async function request(path, options = {}) {
     throw new Error(errMessage);
   }
 
-  if (response.status === 204) return null; // No Content
+  if (response.status === 204) return null;
   return await response.json();
 }
 
