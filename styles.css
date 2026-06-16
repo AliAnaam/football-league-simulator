@@ -18,12 +18,14 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1; /* slate-300 */
+  background: #CBD5E1;
+  /* slate-300 */
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8; /* slate-400 */
+  background: #94A3B8;
+  /* slate-400 */
 }
 
 /* Dynamic visual transitions */
@@ -36,6 +38,7 @@ body {
     opacity: 0;
     transform: translateY(4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -51,10 +54,10 @@ body {
   transform: translateY(-2px);
 }
 
-/* Special league vertical markers for standings table */
 .zone-cl {
   position: relative;
 }
+
 .zone-cl::before {
   content: '';
   position: absolute;
@@ -62,13 +65,14 @@ body {
   top: 0;
   bottom: 0;
   width: 4px;
-  background-color: #10B981; /* LaLiga Green / emerald-500 */
+  background-color: #10B981;
   border-radius: 4px;
 }
 
 .zone-el {
   position: relative;
 }
+
 .zone-el::before {
   content: '';
   position: absolute;
@@ -76,13 +80,14 @@ body {
   top: 0;
   bottom: 0;
   width: 4px;
-  background-color: #3B82F6; /* Europa League / blue-500 */
+  background-color: #3B82F6;
   border-radius: 4px;
 }
 
 .zone-relegation {
   position: relative;
 }
+
 .zone-relegation::before {
   content: '';
   position: absolute;
@@ -90,16 +95,19 @@ body {
   top: 0;
   bottom: 0;
   width: 4px;
-  background-color: #EF4444; /* Relegation / red-500 */
+  background-color: #EF4444;
   border-radius: 4px;
 }
 
 /* Shimmer animation for active simulations */
 @keyframes pulse-soft {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: .8;
     transform: scale(0.98);
@@ -112,10 +120,10 @@ body {
 
 /* Micro-interaction active styling for Sidebar */
 .nav-active {
-  background-color: #ECFDF5 !important; /* emerald-50 */
-  color: #059669 !important; /* emerald-600 */
+  background-color: #ECFDF5 !important;
+  color: #059669 !important;
   font-weight: 600;
-  border-right: 4px solid #10B981; /* emerald-500 */
+  border-right: 4px solid #10B981;
 }
 
 /* Pulse animation for live match badge */
@@ -128,69 +136,95 @@ body {
   box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
   animation: pulse-green 2s infinite;
 }
- 
- @keyframes pulse-green {
-   0% {
-     transform: scale(0.95);
-     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-   }
-   70% {
-     transform: scale(1);
-     box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-   }
-   100% {
-     transform: scale(0.95);
-     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-   }
- }
- 
- /* ================= AUTH & LOGIN TRANSITIONS ================= */
- 
- /* App Layout Blur/Scale state for logged out */
- #app-layout.logged-out {
-   filter: blur(12px) grayscale(20%);
-   opacity: 0.15;
-   transform: scale(0.97);
-   pointer-events: none;
- }
- 
- /* Main transition curve for layout updates */
- #app-layout {
-   transition: filter 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-               opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-               transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
- }
- 
- /* Error Alert Shake Animation */
- @keyframes shake {
-   0%, 100% { transform: translateX(0); }
-   15%, 45%, 75% { transform: translateX(-6px); }
-   30%, 60%, 90% { transform: translateX(6px); }
- }
- 
- .animate-shake {
-   animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
- }
- 
- /* Glow effects for interactive widgets */
- .input-glow:focus-within {
-   box-shadow: 0 0 20px 2px rgba(16, 185, 129, 0.15);
- }
- 
- /* Smooth transition classes for the login overlay */
- #login-page {
-   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
- }
- 
- #login-page.hidden {
-   display: none !important;
- }
+
+@keyframes pulse-green {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* ================= AUTH & LOGIN TRANSITIONS ================= */
+
+/* App Layout Blur/Scale state for logged out */
+#app-layout.logged-out {
+  filter: blur(12px) grayscale(20%);
+  opacity: 0.15;
+  transform: scale(0.97);
+  pointer-events: none;
+}
+
+/* Main transition curve for layout updates */
+#app-layout {
+  transition: filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Error Alert Shake Animation */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  15%,
+  45%,
+  75% {
+    transform: translateX(-6px);
+  }
+
+  30%,
+  60%,
+  90% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+/* Glow effects for interactive widgets */
+.input-glow:focus-within {
+  box-shadow: 0 0 20px 2px rgba(16, 185, 129, 0.15);
+}
+
+/* Smooth transition classes for the login overlay */
+#login-page {
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
+}
+
+#login-page.hidden {
+  display: none !important;
+}
 
 /* ================= CHAMPION MODAL ================= */
 @keyframes champion-bounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  30% { transform: translateY(-10px) scale(1.02); }
-  60% { transform: translateY(-5px) scale(1.01); }
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  30% {
+    transform: translateY(-10px) scale(1.02);
+  }
+
+  60% {
+    transform: translateY(-5px) scale(1.01);
+  }
 }
 
 .champion-modal {
@@ -215,12 +249,12 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   background: #10b981;
   cursor: pointer;
-  box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
   transition: box-shadow 0.2s;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 0 5px rgba(16,185,129,0.2);
+  box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.2);
 }
 
 input[type="color"] {
@@ -229,6 +263,13 @@ input[type="color"] {
 
 /* Morale indicator dots animation */
 @keyframes morale-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }

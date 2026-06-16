@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="tr" class="h-full">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LigaSim Pro - LaLiga Yönetim Sistemi</title>
-  
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -13,9 +14,9 @@
         extend: {
           colors: {
             laliga: {
-              DEFAULT: '#10B981', // Canlı Yeşili / emerald-500
-              light: '#ECFDF5',   // emerald-50
-              dark: '#059669',    // emerald-600
+              DEFAULT: '#10B981',
+              light: '#ECFDF5',
+              dark: '#059669',
               vibrant: '#10B981',
               accent: '#34D399',
             }
@@ -32,13 +33,14 @@
       }
     }
   </script>
-  
+
   <!-- Custom Stylesheets -->
   <link rel="stylesheet" href="styles.css">
-  
+
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body class="h-full bg-slate-50 text-slate-800 flex overflow-hidden">
 
   <!-- ================= APP LAYOUT ================= -->
@@ -46,139 +48,156 @@
 
     <!-- ================= SIDEBAR ================= -->
     <aside class="w-64 bg-slate-100 flex-shrink-0 flex flex-col h-full border-r border-slate-200/80">
-    <!-- Sidebar Header / Logo -->
-    <div class="h-20 flex items-center px-6 border-b border-slate-200/60 bg-white">
-      <div class="flex items-center gap-3">
-        <!-- Logo Icon Container (Vibrant LaLiga Green) -->
-        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/25">
-          <i data-lucide="trophy" class="w-5 h-5"></i>
+      <!-- Sidebar Header / Logo -->
+      <div class="h-20 flex items-center px-6 border-b border-slate-200/60 bg-white">
+        <div class="flex items-center gap-3">
+          <!-- Logo Icon Container (Vibrant LaLiga Green) -->
+          <div
+            class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/25">
+            <i data-lucide="trophy" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 class="text-base font-extrabold text-slate-900 leading-none">LigaSim Pro</h1>
+            <span class="text-[10px] text-slate-400 font-medium tracking-wider uppercase">Yönetim Sistemi</span>
+          </div>
         </div>
+      </div>
+
+      <!-- Navigation Menu Items -->
+      <div class="flex-1 overflow-y-auto px-4 py-6 space-y-7">
+        <!-- Main Menu Section -->
         <div>
-          <h1 class="text-base font-extrabold text-slate-900 leading-none">LigaSim Pro</h1>
-          <span class="text-[10px] text-slate-400 font-medium tracking-wider uppercase">Yönetim Sistemi</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Navigation Menu Items -->
-    <div class="flex-1 overflow-y-auto px-4 py-6 space-y-7">
-      <!-- Main Menu Section -->
-      <div>
-        <span class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3">Ana Menü</span>
-        <nav class="space-y-1">
-          <a href="#" id="nav-home" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium nav-active">
-            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-            <span>Ana Sayfa</span>
-          </a>
-          <a href="#" id="nav-teams" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
-            <i data-lucide="users" class="w-4 h-4"></i>
-            <span>Takımlar</span>
-          </a>
-          <a href="#" id="nav-fixtures" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
-            <i data-lucide="calendar" class="w-4 h-4"></i>
-            <span>Fikstür</span>
-          </a>
-          <a href="#" id="nav-standings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
-            <i data-lucide="list-ordered" class="w-4 h-4"></i>
-            <span>Puan Durumu</span>
-          </a>
-          <a href="#" id="nav-simulation" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
-            <i data-lucide="play-circle" class="w-4 h-4"></i>
-            <span>Simülasyon</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Settings / Support Section -->
-      <div>
-        <span class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3">Sistem</span>
-        <nav class="space-y-1">
-          <a href="#" id="nav-settings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
-            <i data-lucide="settings" class="w-4 h-4"></i>
-            <span>Ayarlar</span>
-          </a>
-          <a href="#" id="nav-support" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
-            <i data-lucide="help-circle" class="w-4 h-4"></i>
-            <span>Destek</span>
-          </a>
-        </nav>
-      </div>
-    </div>
-
-    <!-- Sidebar Footer / Simulation Speed Indicator -->
-    <div class="p-4 border-t border-slate-200/60 bg-white">
-      <div class="bg-slate-50 border border-slate-200/40 rounded-xl p-3 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <div class="live-pulse"></div>
-          <span class="text-[11px] font-semibold text-slate-600">Simülasyon Hazır</span>
-        </div>
-        <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">v1.2.0</span>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ================= MAIN WRAPPER ================= -->
-  <div class="flex-1 flex flex-col h-full overflow-hidden">
-
-    <!-- ================= NAVBAR ================= -->
-    <header class="h-20 bg-white border-b border-slate-200/60 flex items-center justify-between px-8 flex-shrink-0">
-      <!-- Navbar Left (Season and Week information) -->
-      <div class="flex items-center gap-3">
-        <!-- Season selection badge -->
-        <span class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-100 shadow-sm">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-          2024-25 Sezonu
-        </span>
-        <!-- Week information badge -->
-        <span id="navbar-week-badge" class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold border border-slate-200/60">
-          # 18. Hafta
-        </span>
-      </div>
-
-      <!-- Navbar Right (Search, Notifications, Profile) -->
-      <div class="flex items-center gap-6">
-        <!-- Search bar -->
-        <div class="relative w-64 hidden md:block">
-          <input type="text" id="navbar-search" placeholder="Takım veya oyuncu ara..." 
-                 class="w-full bg-slate-50 hover:bg-slate-100/75 focus:bg-white text-xs text-slate-800 pl-9 pr-4 py-2 rounded-xl border border-slate-200/60 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
-          <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <span class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3">Ana Menü</span>
+          <nav class="space-y-1">
+            <a href="#" id="nav-home"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium nav-active">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+              <span>Ana Sayfa</span>
+            </a>
+            <a href="#" id="nav-teams"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span>Takımlar</span>
+            </a>
+            <a href="#" id="nav-fixtures"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
+              <i data-lucide="calendar" class="w-4 h-4"></i>
+              <span>Fikstür</span>
+            </a>
+            <a href="#" id="nav-standings"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
+              <i data-lucide="list-ordered" class="w-4 h-4"></i>
+              <span>Puan Durumu</span>
+            </a>
+            <a href="#" id="nav-simulation"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
+              <i data-lucide="play-circle" class="w-4 h-4"></i>
+              <span>Simülasyon</span>
+            </a>
+          </nav>
         </div>
 
-        <!-- Notification center -->
-        <button class="relative w-10 h-10 rounded-xl bg-slate-50 border border-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all">
-          <i data-lucide="bell" class="w-4 h-4"></i>
-          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></span>
-        </button>
+        <!-- Settings / Support Section -->
+        <div>
+          <span class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3">Sistem</span>
+          <nav class="space-y-1">
+            <a href="#" id="nav-settings"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
+              <i data-lucide="settings" class="w-4 h-4"></i>
+              <span>Ayarlar</span>
+            </a>
+            <a href="#" id="nav-support"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:text-emerald-600 hover:bg-slate-200/50 transition-all font-medium">
+              <i data-lucide="help-circle" class="w-4 h-4"></i>
+              <span>Destek</span>
+            </a>
+          </nav>
+        </div>
+      </div>
 
-        <!-- User profile area -->
-        <div class="flex items-center gap-3 border-l border-slate-200/80 pl-6">
-          <div class="text-right">
-            <h4 class="text-xs font-bold text-slate-900">Admin Yönetici</h4>
-            <span class="text-[10px] text-slate-400 font-medium">Süper Lig Yöneticisi</span>
+      <!-- Sidebar Footer / Simulation Speed Indicator -->
+      <div class="p-4 border-t border-slate-200/60 bg-white">
+        <div class="bg-slate-50 border border-slate-200/40 rounded-xl p-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="live-pulse"></div>
+            <span class="text-[11px] font-semibold text-slate-600">Simülasyon Hazır</span>
           </div>
-          <!-- Profile Badge -->
-          <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white font-bold text-sm flex items-center justify-center shadow-md shadow-emerald-500/20 border border-emerald-400/20 cursor-pointer" title="Admin Profili">
-            AY
+          <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">v1.2.0</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN WRAPPER ================= -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+      <!-- ================= NAVBAR ================= -->
+      <header class="h-20 bg-white border-b border-slate-200/60 flex items-center justify-between px-8 flex-shrink-0">
+        <!-- Navbar Left (Season and Week information) -->
+        <div class="flex items-center gap-3">
+          <!-- Season selection badge -->
+          <span
+            class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-100 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            2024-25 Sezonu
+          </span>
+          <!-- Week information badge -->
+          <span id="navbar-week-badge"
+            class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold border border-slate-200/60">
+            # 18. Hafta
+          </span>
+        </div>
+
+        <!-- Navbar Right (Search, Notifications, Profile) -->
+        <div class="flex items-center gap-6">
+          <!-- Search bar -->
+          <div class="relative w-64 hidden md:block">
+            <input type="text" id="navbar-search" placeholder="Takım veya oyuncu ara..."
+              class="w-full bg-slate-50 hover:bg-slate-100/75 focus:bg-white text-xs text-slate-800 pl-9 pr-4 py-2 rounded-xl border border-slate-200/60 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
           </div>
-          <!-- Logout Button -->
-          <button id="logout-btn" class="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-500 hover:text-rose-700 hover:bg-rose-100 active:scale-95 transition-all cursor-pointer shadow-sm hover:shadow" title="Sistemden Çıkış Yap">
-            <i data-lucide="log-out" class="w-4 h-4"></i>
+
+          <!-- Notification center -->
+          <button
+            class="relative w-10 h-10 rounded-xl bg-slate-50 border border-slate-200/50 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></span>
           </button>
+
+          <!-- User profile area -->
+          <div class="flex items-center gap-3 border-l border-slate-200/80 pl-6">
+            <div class="text-right">
+              <h4 class="text-xs font-bold text-slate-900">Admin Yönetici</h4>
+              <span class="text-[10px] text-slate-400 font-medium">Süper Lig Yöneticisi</span>
+            </div>
+            <!-- Profile Badge -->
+            <div
+              class="w-10 h-10 rounded-xl bg-emerald-500 text-white font-bold text-sm flex items-center justify-center shadow-md shadow-emerald-500/20 border border-emerald-400/20 cursor-pointer"
+              title="Admin Profili">
+              AY
+            </div>
+            <!-- Logout Button -->
+            <button id="logout-btn"
+              class="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-500 hover:text-rose-700 hover:bg-rose-100 active:scale-95 transition-all cursor-pointer shadow-sm hover:shadow"
+              title="Sistemden Çıkış Yap">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <!-- ================= MAIN CONTENT AREA ================= -->
-    <main id="content-area" class="flex-1 overflow-y-auto p-8 page-fade-in">
-      <!-- Content is dynamically rendered here by app.js -->
-    </main>
+      <!-- ================= MAIN CONTENT AREA ================= -->
+      <main id="content-area" class="flex-1 overflow-y-auto p-8 page-fade-in">
+        <!-- Content is dynamically rendered here by app.js -->
+      </main>
 
-  </div> <!-- Close Main Wrapper -->
+    </div> <!-- Close Main Wrapper -->
   </div> <!-- Close App Layout -->
 
   <!-- Team Details Modal (Hidden by Default) -->
-  <div id="team-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-lg w-full overflow-hidden transform scale-95 transition-transform duration-300">
+  <div id="team-modal"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div
+      class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-lg w-full overflow-hidden transform scale-95 transition-transform duration-300">
       <div id="team-modal-content">
         <!-- Rendered dynamically -->
       </div>
@@ -186,54 +205,73 @@
   </div>
 
   <!-- ================= LOGIN PAGE ================= -->
-  <div id="login-page" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-50 transition-all duration-500 overflow-y-auto p-4 md:p-6 hidden opacity-0">
+  <div id="login-page"
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-50 transition-all duration-500 overflow-y-auto p-4 md:p-6 hidden opacity-0">
     <!-- Glowing background elements -->
-    <div class="absolute w-80 h-80 rounded-full bg-emerald-500/8 blur-[100px] top-1/4 left-1/4 animate-pulse pointer-events-none"></div>
-    <div class="absolute w-96 h-96 rounded-full bg-indigo-500/8 blur-[120px] bottom-1/4 right-1/4 animate-pulse pointer-events-none" style="animation-delay: 2s;"></div>
+    <div
+      class="absolute w-80 h-80 rounded-full bg-emerald-500/8 blur-[100px] top-1/4 left-1/4 animate-pulse pointer-events-none">
+    </div>
+    <div
+      class="absolute w-96 h-96 rounded-full bg-indigo-500/8 blur-[120px] bottom-1/4 right-1/4 animate-pulse pointer-events-none"
+      style="animation-delay: 2s;"></div>
 
     <!-- Login Container -->
-    <div class="w-full max-w-md bg-white/80 backdrop-blur-xl border border-slate-200/80 rounded-3xl p-8 shadow-xl relative z-10 transition-all duration-500 transform scale-100 hover:border-slate-300/80">
-      
+    <div
+      class="w-full max-w-md bg-white/80 backdrop-blur-xl border border-slate-200/80 rounded-3xl p-8 shadow-xl relative z-10 transition-all duration-500 transform scale-100 hover:border-slate-300/80">
+
       <!-- Brand Header -->
       <div class="text-center mb-8">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-emerald-500/15 border border-emerald-400/20 mx-auto mb-4 animate-bounce" style="animation-duration: 3s;">
+        <div
+          class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-emerald-500/15 border border-emerald-400/20 mx-auto mb-4 animate-bounce"
+          style="animation-duration: 3s;">
           <i data-lucide="trophy" class="w-7 h-7"></i>
         </div>
-        <h2 class="text-2xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-emerald-600 to-indigo-600 bg-clip-text text-transparent">LigaSim Pro</h2>
-        <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2" id="login-subtitle">LaLiga Yönetim Sistemi</p>
+        <h2
+          class="text-2xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-emerald-600 to-indigo-600 bg-clip-text text-transparent">
+          LigaSim Pro</h2>
+        <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2" id="login-subtitle">LaLiga
+          Yönetim Sistemi</p>
       </div>
 
       <!-- Login Form -->
       <form id="login-form" class="space-y-5">
         <!-- Error Alert -->
-        <div id="login-error" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 text-xs font-semibold flex items-center gap-2.5">
+        <div id="login-error"
+          class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 text-xs font-semibold flex items-center gap-2.5">
           <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
           <span id="login-error-msg">Hatalı kullanıcı adı veya şifre!</span>
         </div>
 
         <!-- Username Input -->
         <div class="space-y-1.5">
-          <label for="username" class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">Kullanıcı Adı</label>
+          <label for="username"
+            class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">Kullanıcı Adı</label>
           <div class="relative group">
             <input type="text" id="username" name="username" required
-                   class="w-full bg-slate-100/60 border border-slate-200 focus:bg-white focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/20 text-xs text-slate-800 pl-10 pr-4 py-3.5 rounded-xl outline-none transition-all placeholder-slate-400 font-semibold shadow-inner"
-                   placeholder="Kullanıcı adınızı girin">
-            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-emerald-500 transition-colors"></i>
+              class="w-full bg-slate-100/60 border border-slate-200 focus:bg-white focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/20 text-xs text-slate-800 pl-10 pr-4 py-3.5 rounded-xl outline-none transition-all placeholder-slate-400 font-semibold shadow-inner"
+              placeholder="Kullanıcı adınızı girin">
+            <i data-lucide="user"
+              class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-emerald-500 transition-colors"></i>
           </div>
         </div>
 
         <!-- Password Input -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
-            <label for="password" class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">Şifre</label>
-            <a href="#" id="forgot-password" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-500 transition-colors">Şifremi Unuttum?</a>
+            <label for="password"
+              class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">Şifre</label>
+            <a href="#" id="forgot-password"
+              class="text-[10px] font-bold text-emerald-600 hover:text-emerald-500 transition-colors">Şifremi
+              Unuttum?</a>
           </div>
           <div class="relative group">
             <input type="password" id="password" name="password" required
-                   class="w-full bg-slate-100/60 border border-slate-200 focus:bg-white focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/20 text-xs text-slate-800 pl-10 pr-10 py-3.5 rounded-xl outline-none transition-all placeholder-slate-400 font-semibold shadow-inner"
-                   placeholder="Şifrenizi girin">
-            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-emerald-500 transition-colors"></i>
-            <button type="button" id="toggle-password" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+              class="w-full bg-slate-100/60 border border-slate-200 focus:bg-white focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/20 text-xs text-slate-800 pl-10 pr-10 py-3.5 rounded-xl outline-none transition-all placeholder-slate-400 font-semibold shadow-inner"
+              placeholder="Şifrenizi girin">
+            <i data-lucide="lock"
+              class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-emerald-500 transition-colors"></i>
+            <button type="button" id="toggle-password"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
               <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
             </button>
           </div>
@@ -243,14 +281,14 @@
         <div class="flex items-center justify-between pt-1">
           <label class="flex items-center gap-2 cursor-pointer select-none">
             <input type="checkbox" id="remember-me" checked
-                   class="w-4 h-4 rounded border-slate-300 bg-slate-100 text-emerald-500 focus:ring-emerald-500/20 cursor-pointer accent-emerald-500">
+              class="w-4 h-4 rounded border-slate-300 bg-slate-100 text-emerald-500 focus:ring-emerald-500/20 cursor-pointer accent-emerald-500">
             <span class="text-xs text-slate-500 font-semibold">Beni Hatırla</span>
           </label>
         </div>
 
         <!-- Submit Button -->
         <button type="submit" id="login-submit-btn"
-                class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 active:scale-[0.99] hover-scale text-white font-extrabold text-xs py-4 rounded-xl shadow-lg shadow-emerald-500/15 border border-emerald-400/10 cursor-pointer flex items-center justify-center gap-2 group transition-all duration-300 mt-2">
+          class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 active:scale-[0.99] hover-scale text-white font-extrabold text-xs py-4 rounded-xl shadow-lg shadow-emerald-500/15 border border-emerald-400/10 cursor-pointer flex items-center justify-center gap-2 group transition-all duration-300 mt-2">
           <span id="submit-btn-text">Sisteme Giriş Yap</span>
           <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
         </button>
@@ -258,20 +296,32 @@
 
       <!-- Social Logins (Divider & Buttons) -->
       <div class="mt-8 pt-6 border-t border-slate-200/80">
-        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block text-center mb-4">VEYA ŞUNUNLA GİRİŞ YAP</span>
+        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block text-center mb-4">VEYA
+          ŞUNUNLA GİRİŞ YAP</span>
         <div class="grid grid-cols-2 gap-3.5">
-          <button type="button" class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 p-2.5 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all shadow-sm cursor-pointer">
+          <button type="button"
+            class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 p-2.5 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all shadow-sm cursor-pointer">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4" />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853" />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                fill="#FBBC05" />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                fill="#EA4335" />
             </svg>
             <span>Google</span>
           </button>
-          <button type="button" class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 p-2.5 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all shadow-sm cursor-pointer">
+          <button type="button"
+            class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 p-2.5 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all shadow-sm cursor-pointer">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C4.1 16.5 4.97 10.38 9.35 10.1c1.28.08 2.02.7 2.76.7.74 0 1.63-.73 3.14-.57 1.67.17 2.88.94 3.53 2.05-3.23 1.9-2.73 6.13.38 7.4-.64 1.57-1.46 3.12-2.11 3.6zM12.03 8.7c-.1 2.22-1.93 3.94-4.04 3.86.1-2.2 2.03-3.95 4.04-3.86z"/>
+              <path
+                d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C4.1 16.5 4.97 10.38 9.35 10.1c1.28.08 2.02.7 2.76.7.74 0 1.63-.73 3.14-.57 1.67.17 2.88.94 3.53 2.05-3.23 1.9-2.73 6.13.38 7.4-.64 1.57-1.46 3.12-2.11 3.6zM12.03 8.7c-.1 2.22-1.93 3.94-4.04 3.86.1-2.2 2.03-3.95 4.04-3.86z" />
             </svg>
             <span>Apple ID</span>
           </button>
@@ -280,7 +330,8 @@
 
       <!-- Signup Toggle Link -->
       <div class="mt-6 text-center border-t border-slate-200/80 pt-4">
-        <button type="button" id="toggle-signup-mode-btn" class="text-xs text-emerald-600 hover:text-emerald-500 font-bold transition-colors cursor-pointer bg-transparent border-0 outline-none">
+        <button type="button" id="toggle-signup-mode-btn"
+          class="text-xs text-emerald-600 hover:text-emerald-500 font-bold transition-colors cursor-pointer bg-transparent border-0 outline-none">
           Yeni yönetici hesabı oluşturun
         </button>
       </div>
@@ -291,4 +342,5 @@
   <!-- Core JavaScript Module -->
   <script src="app.js"></script>
 </body>
+
 </html>

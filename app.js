@@ -1,40 +1,35 @@
-/**
- * LigaSim Pro - Football Simulator Engine & State Controller
- * Fully functional client-side LaLiga management simulator.
- * Spec: Futbol Ligi Yönetim ve Simülasyon Sistemi
- */
+
 
 // ================= STATE MANAGEMENT =================
 const STATE = {
-  currentWeek: 1, // Season starts from Week 1 (spec requirement)
-  maxWeeks: 34,   // 18 teams = (18-1)*2 = 34 weeks
+  currentWeek: 1,
+  maxWeeks: 34,
   isSimulating: false,
   soundEnabled: false,
   searchQuery: "",
   isLoggedIn: false,
-  editingTeamId: null, // tracks team being edited in CRUD form
-  
-  // 18 LaLiga teams — all stats start at 0 (spec: season begins fresh)
+  editingTeamId: null,
+
   // Added: foundingYear, color (hex), logoUrl (base64 or URL), morale (0-100)
   teams: [
-    { id: 'rm',  name: 'Real Madrid',     shortName: 'RM',  power: 95, foundingYear: 1902, color: '#1e3a5f', morale: 75, logoColor: 'bg-indigo-900 border-indigo-700', textLight: 'text-indigo-200', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Carlo Ancelotti',    stadium: 'Santiago Bernabéu',       capacity: '85,000',  logoUrl: '' },
-    { id: 'bar', name: 'Barcelona',        shortName: 'BAR', power: 93, foundingYear: 1899, color: '#a80532', morale: 70, logoColor: 'bg-red-800 border-blue-900',   textLight: 'text-red-200',    played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Hansi Flick',         stadium: 'Spotify Camp Nou',        capacity: '99,354',  logoUrl: '' },
-    { id: 'atm', name: 'Atletico Madrid',  shortName: 'ATM', power: 90, foundingYear: 1903, color: '#ce1b2b', morale: 65, logoColor: 'bg-red-600 border-blue-700',   textLight: 'text-red-100',    played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Diego Simeone',       stadium: 'Cívitas Metropolitano',   capacity: '70,460',  logoUrl: '' },
-    { id: 'gir', name: 'Girona',           shortName: 'GIR', power: 84, foundingYear: 1930, color: '#c8102e', morale: 60, logoColor: 'bg-red-500 border-red-400',    textLight: 'text-red-50',     played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Míchel',              stadium: 'Montilivi',               capacity: '14,624',  logoUrl: '' },
-    { id: 'ath', name: 'Athletic Club',    shortName: 'ATH', power: 85, foundingYear: 1898, color: '#ee2423', morale: 62, logoColor: 'bg-red-700 border-slate-200',  textLight: 'text-red-100',    played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Ernesto Valverde',   stadium: 'San Mamés',               capacity: '53,289',  logoUrl: '' },
-    { id: 'vil', name: 'Villarreal',       shortName: 'VIL', power: 83, foundingYear: 1923, color: '#fcbe00', morale: 58, logoColor: 'bg-yellow-400 border-yellow-300', textLight: 'text-yellow-950', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Marcelino',           stadium: 'Estadio de la Cerámica',  capacity: '23,000',  logoUrl: '' },
-    { id: 'rso', name: 'Real Sociedad',    shortName: 'RSO', power: 84, foundingYear: 1909, color: '#1a4e9c', morale: 60, logoColor: 'bg-blue-600 border-slate-200',  textLight: 'text-blue-100',   played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Imanol Alguacil',   stadium: 'Reale Arena',             capacity: '39,500',  logoUrl: '' },
-    { id: 'bet', name: 'Betis',            shortName: 'BET', power: 82, foundingYear: 1907, color: '#00954c', morale: 55, logoColor: 'bg-emerald-700 border-slate-200', textLight: 'text-emerald-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Manuel Pellegrini', stadium: 'Benito Villamarín',       capacity: '60,720',  logoUrl: '' },
-    { id: 'lpa', name: 'Las Palmas',       shortName: 'LPA', power: 76, foundingYear: 1949, color: '#f5a800', morale: 50, logoColor: 'bg-yellow-500 border-blue-600', textLight: 'text-yellow-950', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Luis Carrión',       stadium: 'Gran Canaria',            capacity: '32,400',  logoUrl: '' },
-    { id: 'ray', name: 'Rayo Vallecano',   shortName: 'RAY', power: 75, foundingYear: 1924, color: '#e60026', morale: 50, logoColor: 'bg-slate-100 border-red-500',   textLight: 'text-slate-800',  played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Íñigo Pérez',        stadium: 'Vallecas',                capacity: '14,700',  logoUrl: '' },
-    { id: 'osa', name: 'Osasuna',          shortName: 'OSA', power: 78, foundingYear: 1920, color: '#6b0000', morale: 52, logoColor: 'bg-red-900 border-slate-300',   textLight: 'text-red-100',    played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Vicente Moreno',    stadium: 'El Sadar',                capacity: '23,576',  logoUrl: '' },
-    { id: 'sev', name: 'Sevilla',          shortName: 'SEV', power: 80, foundingYear: 1890, color: '#d81920', morale: 48, logoColor: 'bg-red-700 border-slate-200',  textLight: 'text-red-50',     played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'García Pimienta',   stadium: 'Ramón Sánchez-Pizjuán',   capacity: '43,883',  logoUrl: '' },
-    { id: 'cel', name: 'Celta Vigo',       shortName: 'CEL', power: 75, foundingYear: 1923, color: '#8ecae6', morale: 45, logoColor: 'bg-sky-400 border-slate-200',   textLight: 'text-sky-950',    played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Claudio Giráldez',  stadium: 'Abanca-Balaídos',         capacity: '29,000',  logoUrl: '' },
-    { id: 'get', name: 'Getafe',           shortName: 'GET', power: 77, foundingYear: 1946, color: '#003d7e', morale: 48, logoColor: 'bg-blue-800 border-blue-600',   textLight: 'text-blue-200',   played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'José Bordalás',     stadium: 'Coliseum',                capacity: '16,500',  logoUrl: '' },
-    { id: 'val', name: 'Valencia',         shortName: 'VAL', power: 79, foundingYear: 1919, color: '#d4a017', morale: 40, logoColor: 'bg-slate-200 border-slate-400', textLight: 'text-slate-800',  played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Rubén Baraja',      stadium: 'Mestalla',                capacity: '49,430',  logoUrl: '' },
-    { id: 'mal', name: 'Mallorca',         shortName: 'MAL', power: 74, foundingYear: 1916, color: '#c8102e', morale: 38, logoColor: 'bg-red-600 border-black',      textLight: 'text-red-100',    played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Jagoba Arrasate',   stadium: 'Son Moix',                capacity: '23,142',  logoUrl: '' },
-    { id: 'cad', name: 'Cadiz',            shortName: 'CAD', power: 70, foundingYear: 1910, color: '#f5d800', morale: 35, logoColor: 'bg-yellow-400 border-blue-800', textLight: 'text-yellow-950', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Paco López',         stadium: 'Nuevo Mirandilla',        capacity: '20,724',  logoUrl: '' },
-    { id: 'gra', name: 'Granada',          shortName: 'GRA', power: 68, foundingYear: 1931, color: '#c8102e', morale: 30, logoColor: 'bg-red-600 border-slate-200',  textLight: 'text-red-100',    played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Guillermo Abascal', stadium: 'Nuevo Los Cármenes',      capacity: '19,336',  logoUrl: '' }
+    { id: 'rm', name: 'Real Madrid', shortName: 'RM', power: 95, foundingYear: 1902, color: '#1e3a5f', morale: 75, logoColor: 'bg-indigo-900 border-indigo-700', textLight: 'text-indigo-200', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Carlo Ancelotti', stadium: 'Santiago Bernabéu', capacity: '85,000', logoUrl: '' },
+    { id: 'bar', name: 'Barcelona', shortName: 'BAR', power: 93, foundingYear: 1899, color: '#a80532', morale: 70, logoColor: 'bg-red-800 border-blue-900', textLight: 'text-red-200', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Hansi Flick', stadium: 'Spotify Camp Nou', capacity: '99,354', logoUrl: '' },
+    { id: 'atm', name: 'Atletico Madrid', shortName: 'ATM', power: 90, foundingYear: 1903, color: '#ce1b2b', morale: 65, logoColor: 'bg-red-600 border-blue-700', textLight: 'text-red-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Diego Simeone', stadium: 'Cívitas Metropolitano', capacity: '70,460', logoUrl: '' },
+    { id: 'gir', name: 'Girona', shortName: 'GIR', power: 84, foundingYear: 1930, color: '#c8102e', morale: 60, logoColor: 'bg-red-500 border-red-400', textLight: 'text-red-50', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Míchel', stadium: 'Montilivi', capacity: '14,624', logoUrl: '' },
+    { id: 'ath', name: 'Athletic Club', shortName: 'ATH', power: 85, foundingYear: 1898, color: '#ee2423', morale: 62, logoColor: 'bg-red-700 border-slate-200', textLight: 'text-red-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Ernesto Valverde', stadium: 'San Mamés', capacity: '53,289', logoUrl: '' },
+    { id: 'vil', name: 'Villarreal', shortName: 'VIL', power: 83, foundingYear: 1923, color: '#fcbe00', morale: 58, logoColor: 'bg-yellow-400 border-yellow-300', textLight: 'text-yellow-950', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Marcelino', stadium: 'Estadio de la Cerámica', capacity: '23,000', logoUrl: '' },
+    { id: 'rso', name: 'Real Sociedad', shortName: 'RSO', power: 84, foundingYear: 1909, color: '#1a4e9c', morale: 60, logoColor: 'bg-blue-600 border-slate-200', textLight: 'text-blue-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Imanol Alguacil', stadium: 'Reale Arena', capacity: '39,500', logoUrl: '' },
+    { id: 'bet', name: 'Betis', shortName: 'BET', power: 82, foundingYear: 1907, color: '#00954c', morale: 55, logoColor: 'bg-emerald-700 border-slate-200', textLight: 'text-emerald-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Manuel Pellegrini', stadium: 'Benito Villamarín', capacity: '60,720', logoUrl: '' },
+    { id: 'lpa', name: 'Las Palmas', shortName: 'LPA', power: 76, foundingYear: 1949, color: '#f5a800', morale: 50, logoColor: 'bg-yellow-500 border-blue-600', textLight: 'text-yellow-950', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Luis Carrión', stadium: 'Gran Canaria', capacity: '32,400', logoUrl: '' },
+    { id: 'ray', name: 'Rayo Vallecano', shortName: 'RAY', power: 75, foundingYear: 1924, color: '#e60026', morale: 50, logoColor: 'bg-slate-100 border-red-500', textLight: 'text-slate-800', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Íñigo Pérez', stadium: 'Vallecas', capacity: '14,700', logoUrl: '' },
+    { id: 'osa', name: 'Osasuna', shortName: 'OSA', power: 78, foundingYear: 1920, color: '#6b0000', morale: 52, logoColor: 'bg-red-900 border-slate-300', textLight: 'text-red-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Vicente Moreno', stadium: 'El Sadar', capacity: '23,576', logoUrl: '' },
+    { id: 'sev', name: 'Sevilla', shortName: 'SEV', power: 80, foundingYear: 1890, color: '#d81920', morale: 48, logoColor: 'bg-red-700 border-slate-200', textLight: 'text-red-50', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'García Pimienta', stadium: 'Ramón Sánchez-Pizjuán', capacity: '43,883', logoUrl: '' },
+    { id: 'cel', name: 'Celta Vigo', shortName: 'CEL', power: 75, foundingYear: 1923, color: '#8ecae6', morale: 45, logoColor: 'bg-sky-400 border-slate-200', textLight: 'text-sky-950', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Claudio Giráldez', stadium: 'Abanca-Balaídos', capacity: '29,000', logoUrl: '' },
+    { id: 'get', name: 'Getafe', shortName: 'GET', power: 77, foundingYear: 1946, color: '#003d7e', morale: 48, logoColor: 'bg-blue-800 border-blue-600', textLight: 'text-blue-200', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'José Bordalás', stadium: 'Coliseum', capacity: '16,500', logoUrl: '' },
+    { id: 'val', name: 'Valencia', shortName: 'VAL', power: 79, foundingYear: 1919, color: '#d4a017', morale: 40, logoColor: 'bg-slate-200 border-slate-400', textLight: 'text-slate-800', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Rubén Baraja', stadium: 'Mestalla', capacity: '49,430', logoUrl: '' },
+    { id: 'mal', name: 'Mallorca', shortName: 'MAL', power: 74, foundingYear: 1916, color: '#c8102e', morale: 38, logoColor: 'bg-red-600 border-black', textLight: 'text-red-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Jagoba Arrasate', stadium: 'Son Moix', capacity: '23,142', logoUrl: '' },
+    { id: 'cad', name: 'Cadiz', shortName: 'CAD', power: 70, foundingYear: 1910, color: '#f5d800', morale: 35, logoColor: 'bg-yellow-400 border-blue-800', textLight: 'text-yellow-950', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Paco López', stadium: 'Nuevo Mirandilla', capacity: '20,724', logoUrl: '' },
+    { id: 'gra', name: 'Granada', shortName: 'GRA', power: 68, foundingYear: 1931, color: '#c8102e', morale: 30, logoColor: 'bg-red-600 border-slate-200', textLight: 'text-red-100', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [], manager: 'Guillermo Abascal', stadium: 'Nuevo Los Cármenes', capacity: '19,336', logoUrl: '' }
   ],
 
   // Top players/scorers mapped to teams for Gol Krallığı
@@ -51,9 +46,9 @@ const STATE = {
     { name: 'A. Dovbyk', teamId: 'gir', goals: 6 }
   ],
 
-  // Fixtures schedule: generated round robin, with weeks 17 and 18 seeded specifically
+
   fixtures: [],
-  history: [] // Stores details of matches simulated in current session
+  history: []
 };
 
 // Seed dynamic roster for scorers & team goals
@@ -78,67 +73,66 @@ const PLAYER_NAMES = {
   gra: ['Myrto Uzuni', 'Lucas Boye', 'Bryan Zaragoza', 'Gonzalo Villar']
 };
 
-// (Pre-seeded week constants removed — season now starts fresh from Week 1)
 
 // ================= SOUND ENGINE (WEB AUDIO API) =================
 const SOUNDS = {
   ctx: null,
-  
+
   init() {
     if (this.ctx) return;
     try {
       this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    } catch(e) {
+    } catch (e) {
       console.warn("Web Audio API not supported");
     }
   },
-  
+
   playClick() {
     if (!STATE.soundEnabled || !this.ctx) return;
     this.init();
-    
+
     let osc = this.ctx.createOscillator();
     let gain = this.ctx.createGain();
-    
+
     osc.type = 'sine';
     osc.frequency.setValueAtTime(600, this.ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.08);
-    
+
     gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
-    
+
     osc.connect(gain);
     gain.connect(this.ctx.destination);
-    
+
     osc.start();
     osc.stop(this.ctx.currentTime + 0.08);
   },
-  
+
   playWhistle(pitch = 587.33, duration = 0.4) {
     if (!STATE.soundEnabled || !this.ctx) return;
     this.init();
-    
+
     let osc1 = this.ctx.createOscillator();
     let osc2 = this.ctx.createOscillator();
     let gain = this.ctx.createGain();
-    
+
     osc1.type = 'triangle';
     osc1.frequency.setValueAtTime(pitch, this.ctx.currentTime);
     osc1.frequency.linearRampToValueAtTime(pitch + 10, this.ctx.currentTime + duration);
-    
+
     osc2.type = 'sine';
     osc2.frequency.setValueAtTime(pitch * 1.5, this.ctx.currentTime);
-    
+
     gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-    
+
     osc1.connect(gain);
     osc2.connect(gain);
     gain.connect(this.ctx.destination);
-    
+
     osc1.start();
     osc2.start();
-    
+
     osc1.stop(this.ctx.currentTime + duration);
     osc2.stop(this.ctx.currentTime + duration);
   },
@@ -146,24 +140,24 @@ const SOUNDS = {
   playGoal() {
     if (!STATE.soundEnabled || !this.ctx) return;
     this.init();
-    
+
     // Low bass boom + high cheering chime
     let osc = this.ctx.createOscillator();
     let gain = this.ctx.createGain();
-    
+
     osc.type = 'sine';
     osc.frequency.setValueAtTime(150, this.ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.3);
-    
+
     gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
-    
+
     osc.connect(gain);
     gain.connect(this.ctx.destination);
-    
+
     osc.start();
     osc.stop(this.ctx.currentTime + 0.3);
-    
+
     setTimeout(() => {
       this.playWhistle(880, 0.15);
     }, 50);
@@ -172,7 +166,7 @@ const SOUNDS = {
   playTrophy() {
     if (!STATE.soundEnabled || !this.ctx) return;
     this.init();
-    
+
     const notes = [261.63, 329.63, 392.00, 523.25]; // C E G C arpeggio
     notes.forEach((freq, index) => {
       setTimeout(() => {
@@ -192,35 +186,31 @@ const SOUNDS = {
 };
 
 // ================= FIXTURES SCHEDULER =================
-/**
- * Generates a full double round-robin fixture list using the circle method.
- * Works for any even number of teams (spec: at least 18).
- * Season always starts clean from Week 1.
- */
+
 function generateFixtures() {
   const teamIds = STATE.teams.map(t => t.id);
-  
+
   // Shuffle teamIds to randomize matchups on every reset
   for (let i = teamIds.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [teamIds[i], teamIds[j]] = [teamIds[j], teamIds[i]];
   }
-  
+
   const numTeams = teamIds.length;
-  
+
   // Ensure even number of teams (add a dummy BYE if needed)
   const ids = numTeams % 2 === 0 ? [...teamIds] : [...teamIds, '__bye__'];
   const n = ids.length;
   const totalWeeks = (n - 1) * 2;
   STATE.maxWeeks = totalWeeks;
-  
+
   const weeks = [];
-  
+
   // First half: standard circle rotation
   for (let round = 0; round < n - 1; round++) {
     const weekMatches = [];
     const rotated = [ids[0], ...ids.slice(1).slice(round).concat(ids.slice(1).slice(0, round))];
-    
+
     for (let i = 0; i < n / 2; i++) {
       const homeId = rotated[i];
       const awayId = rotated[n - 1 - i];
@@ -235,7 +225,7 @@ function generateFixtures() {
     }
     weeks.push(weekMatches);
   }
-  
+
   // Second half: reverse home/away
   const firstHalf = weeks.slice(0);
   firstHalf.forEach(weekMatches => {
@@ -249,7 +239,7 @@ function generateFixtures() {
     }));
     weeks.push(returnWeek);
   });
-  
+
   STATE.fixtures = weeks;
 }
 
@@ -270,15 +260,11 @@ function getMatchTime(index) {
 }
 
 // ================= MORAL SİSTEMİ =================
-/**
- * Spec: "Moral Sistemi" — Win +10, Draw +2, Loss -8 morale.
- * Morale (0-100) adds a power modifier to match simulation.
- * High morale boosts, low morale penalizes.
- */
+
 function updateMorale(team, result) {
-  if (result === 'win')  team.morale = Math.min(100, team.morale + 10);
+  if (result === 'win') team.morale = Math.min(100, team.morale + 10);
   if (result === 'draw') team.morale = Math.min(100, team.morale + 2);
-  if (result === 'loss') team.morale = Math.max(0,   team.morale - 8);
+  if (result === 'loss') team.morale = Math.max(0, team.morale - 8);
 }
 
 function getMoraleBonus(team) {
@@ -287,37 +273,33 @@ function getMoraleBonus(team) {
 }
 
 // ================= SIMULATION MATH MODEL =================
-/**
- * Olasılıksal Maç Simülasyonu
- * Form, takım gücü, ev sahibi avantajı (+3) ve moral katsayısını hesaba katar.
- * Poisson-benzeri gol dağılımı yapar.
- */
+
 function simulateMatch(homeTeam, awayTeam) {
   const homeAdvantage = 3;
   const moraleHome = getMoraleBonus(homeTeam);
   const moraleAway = getMoraleBonus(awayTeam);
-  
+
   const rawPowerHome = homeTeam.power + homeAdvantage + moraleHome;
   const rawPowerAway = awayTeam.power + moraleAway;
-  
+
   const powerDiff = rawPowerHome - rawPowerAway;
 
   // Base expected goals with power difference scaling (stronger team gets higher win probability)
   let homeExpected = 1.35 + (powerDiff * 0.075);
   let awayExpected = 1.15 - (powerDiff * 0.075);
-  
+
   // Ensure expected goals don't drop below 0.2 to allow occasional goals even for weak teams
   homeExpected = Math.max(0.2, homeExpected);
   awayExpected = Math.max(0.2, awayExpected);
-  
+
   // Calculate scores with variance centered around the expectation
   let homeScore = Math.round(homeExpected + (Math.random() - 0.5) * 1.1);
   let awayScore = Math.round(awayExpected + (Math.random() - 0.5) * 1.1);
-  
+
   // Ensure scores are non-negative and cap at realistic limits
   homeScore = Math.max(0, Math.min(homeScore, 6));
   awayScore = Math.max(0, Math.min(awayScore, 6));
-  
+
   return { homeScore, awayScore };
 }
 
@@ -327,18 +309,18 @@ function simulateMatch(homeTeam, awayTeam) {
 function simulateWeek(weekIndex) {
   if (weekIndex < 1 || weekIndex > STATE.maxWeeks) return;
   const weekMatches = STATE.fixtures[weekIndex - 1];
-  
+
   weekMatches.forEach(match => {
     if (match.played) return; // Already simulated
-    
+
     const homeTeam = STATE.teams.find(t => t.id === match.homeId);
     const awayTeam = STATE.teams.find(t => t.id === match.awayId);
-    
+
     const result = simulateMatch(homeTeam, awayTeam);
     match.homeScore = result.homeScore;
     match.awayScore = result.awayScore;
     match.played = true;
-    
+
     // Update standings logic
     homeTeam.played += 1;
     awayTeam.played += 1;
@@ -348,7 +330,7 @@ function simulateWeek(weekIndex) {
     awayTeam.goalsAgainst += result.homeScore;
     homeTeam.goalDiff = homeTeam.goalsFor - homeTeam.goalsAgainst;
     awayTeam.goalDiff = awayTeam.goalsFor - awayTeam.goalsAgainst;
-    
+
     if (result.homeScore > result.awayScore) {
       homeTeam.won += 1;
       homeTeam.points += 3;
@@ -375,18 +357,18 @@ function simulateWeek(weekIndex) {
       updateMorale(homeTeam, 'draw');
       updateMorale(awayTeam, 'draw');
     }
-    
+
     // Cap form array at last 5 matches
     if (homeTeam.form.length > 5) homeTeam.form.shift();
     if (awayTeam.form.length > 5) awayTeam.form.shift();
-    
+
     // Dynamic Scorer simulation
     simulateScorersForMatch(match, result.homeScore, result.awayScore);
   });
-  
+
   // Sort teams table dynamically
   sortStandings();
-  
+
   // Store in simulation log history
   STATE.history.push({
     week: weekIndex,
@@ -492,13 +474,13 @@ function renderHome() {
   const leader = getLeaderTeam();
   const weekMatches = STATE.fixtures[STATE.currentWeek - 1] || [];
   const prevWeekMatches = STATE.fixtures[STATE.currentWeek - 2] || [];
-  
+
   // Calculate aggregate stats
   const totalTeams = STATE.teams.length;
   const playedMatches = STATE.teams.reduce((acc, t) => acc + t.played, 0) / 2;
   const totalGoals = STATE.teams.reduce((acc, t) => acc + t.goalsFor, 0);
   const avgGoals = playedMatches > 0 ? (totalGoals / playedMatches).toFixed(2) : "0.00";
-  
+
   const content = `
     <!-- Header -->
     <div class="mb-8">
@@ -628,9 +610,9 @@ function renderHome() {
             </div>
             <div class="divide-y divide-slate-100">
               ${prevWeekMatches.slice(0, 5).map(m => {
-                const home = STATE.teams.find(t => t.id === m.homeId);
-                const away = STATE.teams.find(t => t.id === m.awayId);
-                return `
+    const home = STATE.teams.find(t => t.id === m.homeId);
+    const away = STATE.teams.find(t => t.id === m.awayId);
+    return `
                   <div class="py-3.5 flex items-center justify-between text-xs font-semibold">
                     <div class="flex items-center gap-3 w-5/12">
                       ${getTeamLogoHTML(home, "w-7 h-7 text-[10px]")}
@@ -648,7 +630,7 @@ function renderHome() {
                     <span class="ml-4 bg-slate-100/75 text-slate-400 px-1.5 py-0.5 rounded text-[9px] font-bold border border-slate-200/30 uppercase shrink-0">BİTTİ</span>
                   </div>
                 `;
-              }).join('')}
+  }).join('')}
             </div>
           </div>
         </div>
@@ -671,9 +653,9 @@ function renderHome() {
                   Sezon tamamlandı! Fikstür ayarlarından sıfırlayabilirsiniz.
                 </div>
               ` : weekMatches.slice(0, 5).map(m => {
-                const home = STATE.teams.find(t => t.id === m.homeId);
-                const away = STATE.teams.find(t => t.id === m.awayId);
-                return `
+    const home = STATE.teams.find(t => t.id === m.homeId);
+    const away = STATE.teams.find(t => t.id === m.awayId);
+    return `
                   <div class="py-3.5 flex items-center justify-between text-xs font-semibold">
                     <!-- Match Date/Badge -->
                     <div class="flex items-center gap-2 w-3/12 shrink-0">
@@ -694,7 +676,7 @@ function renderHome() {
                     </div>
                   </div>
                 `;
-              }).join('')}
+  }).join('')}
             </div>
           </div>
         </div>
@@ -729,11 +711,11 @@ function renderHome() {
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                   ${STATE.teams.slice(0, 8).map((team, idx) => {
-                    let zoneClass = "";
-                    if (idx < 4) zoneClass = "zone-cl";
-                    else if (idx < 6) zoneClass = "zone-el";
-                    
-                    return `
+    let zoneClass = "";
+    if (idx < 4) zoneClass = "zone-cl";
+    else if (idx < 6) zoneClass = "zone-el";
+
+    return `
                       <tr class="hover:bg-slate-50/50 cursor-pointer ${zoneClass}" onclick="showTeamModal('${team.id}')">
                         <td class="py-2.5 text-center text-slate-500 font-bold w-8 pl-1.5">${idx + 1}</td>
                         <td class="py-2.5 flex items-center gap-2">
@@ -748,7 +730,7 @@ function renderHome() {
                         <td class="py-2.5 text-center text-emerald-600 font-extrabold text-xs w-12">${team.points}</td>
                       </tr>
                     `;
-                  }).join('')}
+  }).join('')}
                 </tbody>
               </table>
             </div>
@@ -809,11 +791,11 @@ function renderHome() {
             </div>
             <div class="space-y-4">
               ${STATE.scorers.slice(0, 5).map((player, idx) => {
-                const team = STATE.teams.find(t => t.id === player.teamId);
-                const maxGoals = STATE.scorers[0] ? STATE.scorers[0].goals : 1;
-                const percent = Math.max(10, (player.goals / maxGoals) * 100);
-                
-                return `
+    const team = STATE.teams.find(t => t.id === player.teamId);
+    const maxGoals = STATE.scorers[0] ? STATE.scorers[0].goals : 1;
+    const percent = Math.max(10, (player.goals / maxGoals) * 100);
+
+    return `
                   <div class="text-xs font-semibold">
                     <div class="flex items-center justify-between mb-1.5">
                       <div class="flex items-center gap-2">
@@ -829,7 +811,7 @@ function renderHome() {
                     </div>
                   </div>
                 `;
-              }).join('')}
+  }).join('')}
             </div>
             <!-- Go to standings button -->
             <button onclick="navigateTo('nav-standings')" class="w-full mt-4 py-2 border border-slate-200 hover:border-slate-300 rounded-xl text-center text-[10px] font-extrabold text-slate-600 hover:text-slate-800 transition-all cursor-pointer">
@@ -843,7 +825,7 @@ function renderHome() {
 
     </div>
   `;
-  
+
   document.getElementById("content-area").innerHTML = content;
   lucide.createIcons();
 }
@@ -880,18 +862,18 @@ function handleLogoUpload(input) {
 }
 
 function handleAddTeam() {
-  const name       = document.getElementById('crud-team-name').value.trim();
-  const shortName  = document.getElementById('crud-short-name').value.trim().toUpperCase().substring(0,4);
-  const year       = parseInt(document.getElementById('crud-founding-year').value) || 2000;
-  const color      = document.getElementById('crud-color').value;
-  const power      = parseInt(document.getElementById('crud-power').value) || 75;
-  const logoUrl    = document.getElementById('logo-preview-data').value || '';
-  
+  const name = document.getElementById('crud-team-name').value.trim();
+  const shortName = document.getElementById('crud-short-name').value.trim().toUpperCase().substring(0, 4);
+  const year = parseInt(document.getElementById('crud-founding-year').value) || 2000;
+  const color = document.getElementById('crud-color').value;
+  const power = parseInt(document.getElementById('crud-power').value) || 75;
+  const logoUrl = document.getElementById('logo-preview-data').value || '';
+
   if (!name || !shortName) {
     alert('Takım adı ve kısa ad zorunludur!');
     return;
   }
-  
+
   if (STATE.editingTeamId) {
     // UPDATE existing team
     const team = STATE.teams.find(t => t.id === STATE.editingTeamId);
@@ -920,7 +902,7 @@ function handleAddTeam() {
     // Add empty player roster
     PLAYER_NAMES[newId] = ['Oyuncu 1', 'Oyuncu 2', 'Oyuncu 3'];
   }
-  
+
   // Regenerate fixtures whenever team list changes
   generateFixtures();
   sortStandings();
@@ -932,23 +914,23 @@ function handleEditTeam(teamId) {
   SOUNDS.playClick();
   const team = STATE.teams.find(t => t.id === teamId);
   if (!team) return;
-  
+
   STATE.editingTeamId = teamId;
-  
-  document.getElementById('crud-team-name').value      = team.name;
-  document.getElementById('crud-short-name').value     = team.shortName;
-  document.getElementById('crud-founding-year').value  = team.foundingYear || '';
-  document.getElementById('crud-color').value          = team.color || '#10b981';
-  document.getElementById('crud-power').value          = team.power;
+
+  document.getElementById('crud-team-name').value = team.name;
+  document.getElementById('crud-short-name').value = team.shortName;
+  document.getElementById('crud-founding-year').value = team.foundingYear || '';
+  document.getElementById('crud-color').value = team.color || '#10b981';
+  document.getElementById('crud-power').value = team.power;
   document.getElementById('crud-power-display').textContent = team.power;
-  document.getElementById('logo-preview-data').value   = team.logoUrl || '';
-  
+  document.getElementById('logo-preview-data').value = team.logoUrl || '';
+
   if (team.logoUrl) {
     document.getElementById('logo-preview-img').src = team.logoUrl;
     document.getElementById('logo-preview-img').classList.remove('hidden');
     document.getElementById('logo-preview-placeholder').classList.add('hidden');
   }
-  
+
   document.getElementById('crud-form-title').textContent = 'Takımı Düzenle';
   document.getElementById('crud-submit-btn').textContent = 'Güncelle';
   document.getElementById('crud-cancel-btn').classList.remove('hidden');
@@ -961,11 +943,11 @@ function handleDeleteTeam(teamId) {
   const team = STATE.teams.find(t => t.id === teamId);
   if (!team) return;
   if (!confirm(`"${team.name}" takımını silmek istediğinizden emin misiniz?`)) return;
-  
+
   STATE.teams = STATE.teams.filter(t => t.id !== teamId);
   STATE.scorers = STATE.scorers.filter(s => s.teamId !== teamId);
   delete PLAYER_NAMES[teamId];
-  
+
   generateFixtures();
   sortStandings();
   updateNavbarIndicators();
@@ -1101,11 +1083,11 @@ function renderTeams() {
         ` : `
           <div class="space-y-3">
             ${STATE.teams.map((team, idx) => {
-              const rank = idx + 1;
-              const moraleColor = getMoraleColor(team.morale);
-              const moraleLabel = getMoraleLabel(team.morale);
-              const logoSrc = team.logoUrl || (LOGO_URLS[team.id] || '');
-              return `
+    const rank = idx + 1;
+    const moraleColor = getMoraleColor(team.morale);
+    const moraleLabel = getMoraleLabel(team.morale);
+    const logoSrc = team.logoUrl || (LOGO_URLS[team.id] || '');
+    return `
                 <div class="bg-white border border-slate-100 hover:border-emerald-200/80 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4 group">
                   <!-- Rank -->
                   <span class="text-xs font-black text-slate-400 w-5 text-center shrink-0">${rank}</span>
@@ -1153,7 +1135,7 @@ function renderTeams() {
                   </div>
                 </div>
               `;
-            }).join('')}
+  }).join('')}
           </div>
         `}
       </div>
@@ -1169,9 +1151,9 @@ function renderFixtures(selectedWeek = STATE.currentWeek) {
   for (let w = 1; w <= STATE.maxWeeks; w++) {
     options += `<option value="${w}" ${w === Number(selectedWeek) ? 'selected' : ''}>${w}. Hafta Karşılaşmaları</option>`;
   }
-  
+
   const weekMatches = STATE.fixtures[selectedWeek - 1] || [];
-  
+
   const content = `
     <!-- Header -->
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -1204,11 +1186,11 @@ function renderFixtures(selectedWeek = STATE.currentWeek) {
             Hafta verisi bulunamadı.
           </div>
         ` : weekMatches.map(m => {
-          const home = STATE.teams.find(t => t.id === m.homeId);
-          const away = STATE.teams.find(t => t.id === m.awayId);
-          const isPlayed = m.played;
-          
-          return `
+    const home = STATE.teams.find(t => t.id === m.homeId);
+    const away = STATE.teams.find(t => t.id === m.awayId);
+    const isPlayed = m.played;
+
+    return `
             <div class="py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-semibold hover:bg-slate-50/50 px-2 rounded-xl transition-colors">
               <!-- Left: Date/Time Info -->
               <div class="flex sm:flex-col items-center sm:items-start gap-2 sm:gap-0.5 sm:w-2/12">
@@ -1254,7 +1236,7 @@ function renderFixtures(selectedWeek = STATE.currentWeek) {
               </div>
             </div>
           `;
-        }).join('')}
+  }).join('')}
       </div>
     </div>
   `;
@@ -1301,17 +1283,17 @@ function renderStandings() {
             </thead>
             <tbody class="divide-y divide-slate-100">
               ${STATE.teams.map((team, idx) => {
-                let zoneClass = "";
-                const numTeams = STATE.teams.length;
-                if (idx < 4) zoneClass = "zone-cl";
-                else if (idx < 6) zoneClass = "zone-el";
-                else if (idx >= numTeams - 3) zoneClass = "zone-relegation";
-                
-                const rank = idx + 1;
-                let bgRank = "text-slate-500";
-                if (rank === 1) bgRank = "text-amber-500 text-sm";
-                
-                return `
+    let zoneClass = "";
+    const numTeams = STATE.teams.length;
+    if (idx < 4) zoneClass = "zone-cl";
+    else if (idx < 6) zoneClass = "zone-el";
+    else if (idx >= numTeams - 3) zoneClass = "zone-relegation";
+
+    const rank = idx + 1;
+    let bgRank = "text-slate-500";
+    if (rank === 1) bgRank = "text-amber-500 text-sm";
+
+    return `
                   <tr class="hover:bg-slate-50 cursor-pointer ${zoneClass} transition-colors" onclick="showTeamModal('${team.id}')">
                     <td class="py-3 text-center font-black ${bgRank} w-10 pl-2">
                       ${rank === 1 ? `<i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500 text-amber-500 inline-block"></i>` : rank}
@@ -1330,7 +1312,7 @@ function renderStandings() {
                     <td class="py-3 text-center text-emerald-600 font-extrabold text-sm w-10">${team.points}</td>
                   </tr>
                 `;
-              }).join('')}
+  }).join('')}
             </tbody>
           </table>
         </div>
@@ -1364,8 +1346,8 @@ function renderStandings() {
           </div>
           
           ${(() => {
-            const leader = getLeaderTeam();
-            return `
+      const leader = getLeaderTeam();
+      return `
               <div class="flex items-center gap-4 mb-4">
                 ${getTeamLogoHTML(leader, "w-14 h-14 text-base")}
                 <div>
@@ -1391,7 +1373,7 @@ function renderStandings() {
                 </div>
               </div>
             `;
-          })()}
+    })()}
         </div>
 
         <!-- Gol Krallığı Tablosu -->
@@ -1404,12 +1386,12 @@ function renderStandings() {
           </div>
           <div class="space-y-4">
             ${STATE.scorers.slice(0, 5).map((player, idx) => {
-              const team = STATE.teams.find(t => t.id === player.teamId);
-              // Max goals for progress bar logic
-              const maxGoals = STATE.scorers[0].goals;
-              const percent = Math.max(10, (player.goals / maxGoals) * 100);
-              
-              return `
+      const team = STATE.teams.find(t => t.id === player.teamId);
+      // Max goals for progress bar logic
+      const maxGoals = STATE.scorers[0].goals;
+      const percent = Math.max(10, (player.goals / maxGoals) * 100);
+
+      return `
                 <div class="text-xs font-semibold">
                   <div class="flex items-center justify-between mb-1.5">
                     <div class="flex items-center gap-2">
@@ -1425,7 +1407,7 @@ function renderStandings() {
                   </div>
                 </div>
               `;
-            }).join('')}
+    }).join('')}
           </div>
         </div>
       </div>
@@ -1506,24 +1488,24 @@ function renderSimulation() {
               Henüz simüle edilmiş hafta bulunmuyor. Kontrolleri kullanarak ligi oynatın.
             </div>
           ` : STATE.history.map(hist => {
-            return `
+    return `
               <div class="border-b border-slate-100 pb-3">
                 <div class="text-[10px] font-bold text-emerald-600 mb-1">=== ${hist.week}. HAFTA SONUÇLARI ===</div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
                   ${hist.matches.map(m => {
-                    const h = STATE.teams.find(t => t.id === m.homeId);
-                    const a = STATE.teams.find(t => t.id === m.awayId);
-                    return `
+      const h = STATE.teams.find(t => t.id === m.homeId);
+      const a = STATE.teams.find(t => t.id === m.awayId);
+      return `
                       <div class="flex justify-between hover:bg-slate-50 px-1 rounded transition-colors">
                         <span class="truncate">${h.name} - ${a.name}</span>
                         <span class="font-bold text-slate-900 text-right shrink-0">${m.homeScore} - ${m.awayScore}</span>
                       </div>
                     `;
-                  }).join('')}
+    }).join('')}
                 </div>
               </div>
             `;
-          }).reverse().join('')}
+  }).reverse().join('')}
         </div>
       </div>
     </div>
@@ -1639,16 +1621,13 @@ function renderSupport() {
 }
 
 // ================= MATCH CENTER TICKER TICK =================
-/**
- * Triggers a beautiful interactive live score ticker overlay.
- * Replicates the intense experience of simulated soccer weeks.
- */
+
 function showLiveTickerOverlay(weekIndex, matchesToSimulate, callback) {
   SOUNDS.playWhistle();
-  
+
   const overlay = document.createElement("div");
   overlay.className = "fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 page-fade-in";
-  
+
   overlay.innerHTML = `
     <div class="bg-white rounded-3xl border border-slate-100 max-w-2xl w-full p-8 shadow-2xl flex flex-col h-[520px] transform scale-100 transition-all">
       <div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
@@ -1678,9 +1657,9 @@ function showLiveTickerOverlay(weekIndex, matchesToSimulate, callback) {
       </div>
     </div>
   `;
-  
+
   document.body.appendChild(overlay);
-  
+
   // Create live match templates for all 9 matches of the week
   const tickerRows = document.getElementById("ticker-match-rows");
   const matchesData = matchesToSimulate.map(m => {
@@ -1696,7 +1675,7 @@ function showLiveTickerOverlay(weekIndex, matchesToSimulate, callback) {
       events: []
     };
   });
-  
+
   // Render match row skeletons
   tickerRows.innerHTML = matchesData.map((m, idx) => {
     return `
@@ -1720,20 +1699,20 @@ function showLiveTickerOverlay(weekIndex, matchesToSimulate, callback) {
       </div>
     `;
   }).join('');
-  
+
   // Tick-based match duration (0 to 90 minutes)
   let minute = 0;
   const totalDuration = 90;
   const tickRate = 40; // ms per minute, fast sim!
-  
+
   const timer = setInterval(() => {
     minute += 3;
-    
+
     // Update progress
     const progressPercent = (minute / totalDuration) * 100;
     document.getElementById("ticker-progress-bar").style.width = `${progressPercent}%`;
     document.getElementById("ticker-status-text").innerText = `Dakika ${minute}'`;
-    
+
     // Random goal distribution along the game ticks
     matchesData.forEach((m, idx) => {
       // Home goal
@@ -1757,19 +1736,19 @@ function showLiveTickerOverlay(weekIndex, matchesToSimulate, callback) {
         }, 300);
       }
     });
-    
+
     if (minute >= totalDuration) {
       clearInterval(timer);
       SOUNDS.playWhistle();
-      
+
       // Finalize exact scores on screen
       matchesData.forEach((m, idx) => {
         document.getElementById(`live-home-score-${idx}`).innerText = m.finalHomeScore;
         document.getElementById(`live-away-score-${idx}`).innerText = m.finalAwayScore;
       });
-      
+
       document.getElementById("ticker-status-text").innerHTML = `<span class="text-rose-600 font-black">MS BİTTİ</span>`;
-      
+
       // Hold overlay for 1.5 seconds then close
       setTimeout(() => {
         overlay.classList.add("opacity-0");
@@ -1789,31 +1768,31 @@ function handleSimulateWeek() {
     alert("Sezon tamamlandı! Fikstürü sıfırlayıp yeniden oynayabilirsiniz.");
     return;
   }
-  
+
   STATE.isSimulating = true;
-  
+
   // Pre-compute current week simulation results secretly
   const weekIdx = STATE.currentWeek;
   simulateWeek(weekIdx);
-  
+
   // Pull simulated results for this week
   const simulatedMatches = STATE.fixtures[weekIdx - 1];
-  
+
   // Launch the live action ticker
   showLiveTickerOverlay(weekIdx, simulatedMatches, () => {
     STATE.currentWeek += 1;
     STATE.isSimulating = false;
-    
+
     // Update navbar indicators
     updateNavbarIndicators();
-    
+
     // Re-render current page to show new standings and scores
     const activeNav = document.querySelector(".nav-active");
     if (activeNav) {
       const activeId = activeNav.id;
       navigateTo(activeId);
     }
-    
+
     // Check if season just finished and celebrate
     if (STATE.currentWeek > STATE.maxWeeks) {
       triggerChampionshipCelebration();
@@ -1826,13 +1805,13 @@ function handleSimulateSeason() {
     alert("Sezon tamamlandı!");
     return;
   }
-  
+
   SOUNDS.playWhistle();
-  
+
   // Fast simulation of all remaining weeks
   const startWeek = STATE.currentWeek;
   const endWeek = STATE.maxWeeks;
-  
+
   const overlay = document.createElement("div");
   overlay.className = "fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 page-fade-in";
   overlay.innerHTML = `
@@ -1850,29 +1829,29 @@ function handleSimulateSeason() {
   `;
   document.body.appendChild(overlay);
   lucide.createIcons();
-  
+
   let w = startWeek;
   const interval = setInterval(() => {
     simulateWeek(w);
     w += 1;
-    
+
     const progress = ((w - startWeek) / (endWeek - startWeek + 1)) * 100;
     document.getElementById("season-progress").style.width = `${progress}%`;
     document.getElementById("season-progress-text").innerText = `HAFTA ${Math.min(endWeek, w)}`;
-    
+
     if (w > endWeek) {
       clearInterval(interval);
       STATE.currentWeek = endWeek + 1;
-      
+
       // Close overlay
       setTimeout(() => {
         overlay.remove();
         updateNavbarIndicators();
-        
+
         // Re-render
         const activeNav = document.querySelector(".nav-active");
         if (activeNav) navigateTo(activeNav.id);
-        
+
         // Championship fanfare
         triggerChampionshipCelebration();
       }, 500);
@@ -1886,7 +1865,7 @@ function triggerChampionshipCelebration() {
   const topScorer = STATE.scorers[0];
   const totalGoals = STATE.teams.reduce((a, t) => a + t.goalsFor, 0);
   const topScorerTeam = topScorer ? STATE.teams.find(t => t.id === topScorer.teamId) : null;
-  
+
   const celebration = document.createElement("div");
   celebration.className = "fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 page-fade-in overflow-y-auto";
   celebration.innerHTML = `
@@ -1966,12 +1945,12 @@ function closeCelebration(btn) {
 function resetSimulation(shuffleFixtures = false) {
   SOUNDS.playWhistle(400, 0.25);
   if (!confirm("Tüm lig verilerini sıfırlamak ve 1. haftadan başlamak istediğinizden emin misiniz?")) return;
-  
+
   // Reset season to Week 1 with all stats at zero (spec requirement)
   STATE.currentWeek = 1;
   STATE.history = [];
   STATE.editingTeamId = null;
-  
+
   // Reset all team stats to zero, restore morale to starting values
   STATE.teams.forEach(t => {
     t.played = 0;
@@ -1985,10 +1964,10 @@ function resetSimulation(shuffleFixtures = false) {
     t.form = [];
     t.morale = 50; // Reset morale to neutral
   });
-  
+
   // Reset scorers to empty (fresh season)
   STATE.scorers = [];
-  
+
   if (shuffleFixtures) {
     generateFixtures();
   } else {
@@ -2001,10 +1980,10 @@ function resetSimulation(shuffleFixtures = false) {
       });
     });
   }
-  
+
   sortStandings();
   updateNavbarIndicators();
-  
+
   const activeNav = document.querySelector(".nav-active");
   if (activeNav) navigateTo(activeNav.id);
 }
@@ -2026,10 +2005,10 @@ function showTeamModal(teamId) {
   SOUNDS.playClick();
   const team = STATE.teams.find(t => t.id === teamId);
   const rank = STATE.teams.findIndex(t => t.id === teamId) + 1;
-  
+
   const modal = document.getElementById("team-modal");
   const content = document.getElementById("team-modal-content");
-  
+
   content.innerHTML = `
     <!-- Top banner with team color badge -->
     <div class="h-24 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-between px-6 relative border-b border-slate-150">
@@ -2094,13 +2073,13 @@ function showTeamModal(teamId) {
       </div>
     </div>
   `;
-  
+
   modal.classList.remove("hidden");
   setTimeout(() => {
     modal.classList.remove("opacity-0");
     modal.querySelector(".transform").classList.remove("scale-95");
   }, 10);
-  
+
   lucide.createIcons();
 }
 
@@ -2132,26 +2111,26 @@ function navigateTo(navId, skipSound = false) {
   if (!skipSound) {
     SOUNDS.playClick();
   }
-  
+
   localStorage.setItem('vanilla_active_nav', navId);
-  
+
   // Remove nav-active from all items
   const menuItems = document.querySelectorAll("aside nav a");
   menuItems.forEach(el => el.classList.remove("nav-active"));
-  
+
   // Add active to selected
   const activeEl = document.getElementById(navId);
   if (activeEl) {
     activeEl.classList.add("nav-active");
   }
-  
+
   // Load target component with animation
   const contentArea = document.getElementById("content-area");
   contentArea.classList.remove("page-fade-in");
   void contentArea.offsetWidth; // Trigger reflow to restart animation
   contentArea.classList.add("page-fade-in");
-  
-  switch(navId) {
+
+  switch (navId) {
     case 'nav-home':
       renderHome();
       break;
@@ -2182,11 +2161,11 @@ function navigateTo(navId, skipSound = false) {
 document.getElementById("navbar-search").addEventListener("input", (e) => {
   const query = e.target.value.toLowerCase().trim();
   STATE.searchQuery = query;
-  
+
   // Find which nav is active and filter grid if matching
   const activeNav = document.querySelector(".nav-active");
   if (!activeNav) return;
-  
+
   if (activeNav.id === 'nav-teams') {
     // Dynamically filter teams grid
     const cards = document.querySelectorAll("#content-area > div.grid > div");
@@ -2220,8 +2199,8 @@ document.querySelectorAll("aside nav a").forEach(el => {
 // ================= AUTHENTICATION & LOGIN LOGIC =================
 
 function checkAuth(isInitial = false) {
-  const loggedIn = localStorage.getItem("ligasim_logged_in") === "true" || 
-                   sessionStorage.getItem("ligasim_logged_in") === "true";
+  const loggedIn = localStorage.getItem("ligasim_logged_in") === "true" ||
+    sessionStorage.getItem("ligasim_logged_in") === "true";
   STATE.isLoggedIn = loggedIn;
 
   const appLayout = document.getElementById("app-layout");
@@ -2238,7 +2217,7 @@ function checkAuth(isInitial = false) {
       // Play transition out animation
       loginPage.style.opacity = "0";
       loginPage.style.transform = "scale(0.95)";
-      
+
       setTimeout(() => {
         loginPage.classList.add("hidden");
         loginPage.classList.remove("flex");
@@ -2250,7 +2229,7 @@ function checkAuth(isInitial = false) {
     appLayout.classList.add("logged-out");
     loginPage.classList.remove("hidden");
     loginPage.classList.add("flex");
-    
+
     setTimeout(() => {
       loginPage.style.opacity = "1";
       loginPage.style.transform = "scale(1)";
@@ -2262,7 +2241,7 @@ function checkAuth(isInitial = false) {
 document.getElementById("toggle-password").addEventListener("click", () => {
   const passwordInput = document.getElementById("password");
   const eyeIcon = document.getElementById("eye-icon");
-  
+
   if (passwordInput.type === "password") {
     passwordInput.type = "text";
     eyeIcon.setAttribute("data-lucide", "eye-off");
@@ -2298,14 +2277,14 @@ if (toggleSignUpBtn) {
   toggleSignUpBtn.addEventListener("click", () => {
     legacyIsSignUp = !legacyIsSignUp;
     SOUNDS.playClick();
-    
+
     const subtitle = document.getElementById("login-subtitle");
     const submitBtnText = document.getElementById("submit-btn-text");
     const usernameInput = document.getElementById("username");
     const errorAlert = document.getElementById("login-error");
-    
+
     errorAlert.classList.add("hidden");
-    
+
     if (legacyIsSignUp) {
       subtitle.innerText = "Yeni Yönetici Kaydı";
       submitBtnText.innerText = "Kayıt Ol ve Giriş Yap";
@@ -2323,7 +2302,7 @@ if (toggleSignUpBtn) {
 // Login form submit handler
 document.getElementById("login-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  
+
   const user = document.getElementById("username").value.trim();
   const pass = document.getElementById("password").value.trim();
   const errorAlert = document.getElementById("login-error");
@@ -2340,7 +2319,7 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
 
   setTimeout(() => {
     const admins = getLegacyAdmins();
-    
+
     if (legacyIsSignUp) {
       // Check if username taken
       const exists = admins.some(a => a.username.toLowerCase() === user.toLowerCase());
@@ -2354,7 +2333,7 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
         submitBtn.innerHTML = originalBtnHTML;
         return;
       }
-      
+
       // Save new admin and switch mode back to normal
       saveLegacyAdmin(user, pass);
       legacyIsSignUp = false;
@@ -2372,23 +2351,23 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
 
     if (isValid) {
       errorAlert.classList.add("hidden");
-      
+
       // Play celebratory chime sound
       SOUNDS.playTrophy();
-      
+
       const rememberMe = document.getElementById("remember-me").checked;
       if (rememberMe) {
         localStorage.setItem("ligasim_logged_in", "true");
       } else {
         sessionStorage.setItem("ligasim_logged_in", "true");
       }
-      
+
       submitBtn.innerHTML = `
         <i data-lucide="check" class="w-4 h-4"></i>
         <span>Giriş Başarılı!</span>
       `;
       lucide.createIcons();
-      
+
       setTimeout(() => {
         checkAuth(false);
         submitBtn.disabled = false;
@@ -2397,15 +2376,15 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
         document.getElementById("password").value = "";
         lucide.createIcons();
       }, 800);
-      
+
     } else {
       // Play click/error sound
       SOUNDS.playClick();
-      
+
       errorMsg.innerText = "Hatalı kullanıcı adı veya şifre!";
       errorAlert.classList.remove("hidden");
       errorAlert.classList.add("animate-shake");
-      
+
       setTimeout(() => {
         errorAlert.classList.remove("animate-shake");
       }, 500);
@@ -2423,16 +2402,16 @@ document.getElementById("logout-btn").addEventListener("click", () => {
     SOUNDS.playClick();
     localStorage.removeItem("ligasim_logged_in");
     sessionStorage.removeItem("ligasim_logged_in");
-    
+
     const appLayout = document.getElementById("app-layout");
     const loginPage = document.getElementById("login-page");
-    
+
     appLayout.classList.add("logged-out");
     loginPage.style.opacity = "0";
     loginPage.style.transform = "scale(1.05)";
     loginPage.classList.remove("hidden");
     loginPage.classList.add("flex");
-    
+
     setTimeout(() => {
       loginPage.style.opacity = "1";
       loginPage.style.transform = "scale(1)";
@@ -2445,14 +2424,14 @@ window.addEventListener("DOMContentLoaded", () => {
   sortStandings();
   generateFixtures();
   updateNavbarIndicators();
-  
+
   // Verify auth state immediately (initial load)
   checkAuth(true);
-  
+
   // Render initial homepage or saved page
   const savedNav = localStorage.getItem('vanilla_active_nav') || 'nav-home';
   navigateTo(savedNav, true);
-  
+
   // Set up Lucide icons
   lucide.createIcons();
 });
