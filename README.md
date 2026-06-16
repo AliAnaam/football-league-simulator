@@ -40,7 +40,7 @@ graph TD
     end
 
     subgraph Service Layer [ASP.NET Core Web API - /backend]
-        API[LigaSim.API]
+        API[backend]
         Controllers[API Controllers]
         Services[Services layer - Simulation, Fixture, Auth]
         Repos[Repositories layer - Team, Match, Scorer]
@@ -64,7 +64,7 @@ A premium Single Page Application built on **React 19**, **Vite**, and styled wi
 - **Admin Panel**: Secure password-protected state transition to unlock Team CRUD actions (create, edit, delete) and reset seasons.
 - **Responsive Layout**: Designed for seamless use on ultra-wide desktop monitors down to mobile viewports.
 
-### 2. 🔌 Backend (Web API) — `backend/LigaSim.API/`
+### 2. 🔌 Backend (Web API) — `backend/`
 An enterprise-ready **ASP.NET Core 8.0 Web API** written in C#, designed around clean architecture principles.
 - **RESTful Endpoints**: Dedicated routes for `/api/teams`, `/api/fixtures`, `/api/simulation`, `/api/standings`, and `/api/auth`.
 - **Entity Framework Core**: Interacts with a local SQLite file database (`ligasim.db`).
@@ -88,7 +88,7 @@ A lightweight, self-contained single-page client (`index.html`, `app.js`, `style
 Navigate to the API folder and launch the developer host:
 
 ```bash
-cd backend/LigaSim.API
+cd backend
 dotnet restore
 dotnet run
 ```

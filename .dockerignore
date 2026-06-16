@@ -6,7 +6,7 @@ node_modules/
 .github/
 .vscode/
 frontend/
-backend/LigaSim.API/bin/
-backend/LigaSim.API/obj/
+backend/bin/
+backend/obj/
 *.db
 *.db-journal
