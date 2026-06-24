@@ -572,7 +572,7 @@ export default function App() {
                 LALIGA SIM
               </span>
               <span className="block text-[10px] text-red-700 font-bold uppercase tracking-widest mt-0.5">
-                Football League Simulator
+                Futbol Ligi Simülatörü
               </span>
             </div>
           </div>
