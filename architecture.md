@@ -1,10 +1,10 @@
-# 🏆 LigaSim Pro — Project Architecture & Documentation
+# LALIGA SIM — Project Architecture & Documentation
 
-Welcome to the technical documentation for **LigaSim Pro**. This document details the system design, project components, API specifications, and setup instructions.
+Welcome to the technical documentation for **LALIGA SIM**. This document details the system design, project components, API specifications, and setup instructions.
 
 ---
 
-## 🧱 Project Architecture
+## Project Architecture
 
 The workspace is organized into separate client-server architectures to promote separation of concerns and local testability:
 
@@ -33,34 +33,34 @@ graph TD
     Repos --> DB
 ```
 
-### 1. 🖥️ Frontend (React & Vite) — `frontend/`
+### 1. Frontend (React & Vite) — `frontend/`
 A premium Single Page Application built on **React 19**, **Vite**, and styled with custom **Tailwind CSS**. 
 - **Dynamic Dashboard**: Full view of recently played games, upcoming schedules, Pichichi leaderboards, and league standings.
 - **Interactive Audio Engine**: Procedural synthesizers that generate click feedbacks and highlight alerts dynamically without requiring heavy mp3 assets.
 - **Admin Panel**: Secure password-protected state transition to unlock Team CRUD actions (create, edit, delete) and reset seasons.
 - **Responsive Layout**: Designed for seamless use on ultra-wide desktop monitors down to mobile viewports.
 
-### 2. 🔌 Backend (Web API) — `backend/`
+### 2. Backend (Web API) — `backend/`
 An enterprise-ready **ASP.NET Core 8.0 Web API** written in C#, designed around clean architecture principles.
 - **RESTful Endpoints**: Dedicated routes for `/api/teams`, `/api/fixtures`, `/api/simulation`, `/api/standings`, and `/api/auth`.
 - **Entity Framework Core**: Interacts with a local SQLite file database (`ligasim.db`).
 - **Berger Tables Fixture Generator**: Built-in tournament round-robin scheduler that creates balanced home-and-away matchups for any number of custom teams.
 - **Sim Engine**: A modular simulator that calculates score odds utilizing a Gaussian-like distribution scaled by a team's custom `power` value.
 
-### 3. 📄 Legacy Client (Vanilla HTML5) — Root directory
+### 3. Legacy Client (Vanilla HTML5) — Root directory
 A lightweight, self-contained single-page client (`index.html`, `app.js`, `styles.css`) utilizing local state management for quick prototyping.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 📋 Prerequisites
+### Prerequisites
 - **.NET SDK 8.0** or later
 - **Node.js** (v18.x or later) & **npm** (v9.x or later)
 
 ---
 
-### 🟢 1. Running the Backend API
+### 1. Running the Backend API
 Navigate to the API folder and launch the developer host:
 
 ```bash
@@ -78,7 +78,7 @@ The server will initialize on standard port:
 
 ---
 
-### 🔵 2. Running the React Frontend
+### 2. Running the React Frontend
 Open a new terminal tab, navigate to the React app folder, and start the Vite local dev server:
 
 ```bash
@@ -91,7 +91,7 @@ npm run dev
 
 ---
 
-### ⚪ 3. Running the Legacy Client
+### 3. Running the Legacy Client
 If you'd like to test the isolated, database-free Vanilla JavaScript prototype:
 1. Double-click the root `index.html` file in your system, or
 2. Host it using a quick local server:
@@ -101,18 +101,18 @@ If you'd like to test the isolated, database-free Vanilla JavaScript prototype:
 
 ---
 
-## 🛠️ Features Breakdown
+## Features Breakdown
 
-### 🎲 Weight-Scaled Simulation Engine
+### Weight-Scaled Simulation Engine
 The core simulation uses a formula to compute realistic football score lines:
 $$\text{Home Score} = \text{Poisson}(\lambda_{\text{home}}) \quad \text{where} \quad \lambda_{\text{home}} = f(\text{Power}_{\text{home}} + \text{Home Advantage})$$
 $$\text{Away Score} = \text{Poisson}(\lambda_{\text{away}}) \quad \text{where} \quad \lambda_{\text{away}} = f(\text{Power}_{\text{away}})$$
 This produces highly unpredictable results, but ensures elite teams consistently rank higher over a 34-match sample.
 
-### ✍️ Pichichi Trophy Tracker
+### Pichichi Trophy Tracker
 Every single simulated goal records a scorer entry. The simulator generates natural goalscorer names using real Spanish LaLiga player charts dynamically to populate the Golden Boot standings.
 
-### 🔐 Administrative Authority
+### Administrative Authority
 To modify the league, click on the **Yönetici Girişi** (Admin Login) button on the bottom left:
 - **Default Username**: `admin`
 - **Default Password**: `admin123`
@@ -121,7 +121,7 @@ Once logged in, you can add new clubs, edit stadium capacities, change team powe
 
 ---
 
-## 📡 REST API Specifications
+## REST API Specifications
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
