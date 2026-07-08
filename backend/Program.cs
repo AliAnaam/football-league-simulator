@@ -85,7 +85,9 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "https://football-league-simulator-six.vercel.app",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "http://localhost:8081",
+                "http://localhost:8082"
               )
               .AllowAnyMethod()
               .AllowAnyHeader()

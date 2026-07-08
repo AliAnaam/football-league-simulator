@@ -1,0 +1,468 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View, Text, StyleSheet, ScrollView, RefreshControl,
+  ActivityIndicator, FlatList, TouchableOpacity,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import StatCard from '../components/StatCard';
+import MatchCard from '../components/MatchCard';
+import * as api from '../services/api';
+
+const HomeScreen = ({ navigation }) => {
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [standings, setStandings] = useState([]);
+  const [recentMatches, setRecentMatches] = useState([]);
+  const [upcomingMatches, setUpcomingMatches] = useState([]);
+  const [scorers, setScorers] = useState([]);
+  const [currentWeek, setCurrentWeek] = useState(1);
+  const [maxWeek, setMaxWeek] = useState(38);
+  const [teams, setTeams] = useState([]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setError(null);
+      const [teamsData, standingsData, scorersData, week, max] = await Promise.all([
+        api.getTeams(),
+        api.getStandings(),
+        api.getScorers(),
+        api.getCurrentWeek(),
+        api.getMaxWeek(),
+      ]);
+
+      setTeams(teamsData || []);
+      setStandings(standingsData || []);
+      setScorers(scorersData || []);
+      setCurrentWeek(week || 1);
+      setMaxWeek(max || 38);
+
+      // Fetch recent (last played week) and upcoming matches
+      const lastPlayedWeek = (week || 1) - 1;
+      if (lastPlayedWeek >= 1) {
+        const recent = await api.getMatchesByWeek(lastPlayedWeek);
+        setRecentMatches(recent || []);
+      } else {
+        setRecentMatches([]);
+      }
+
+      if (week <= max) {
+        const upcoming = await api.getMatchesByWeek(week);
+        setUpcomingMatches(upcoming || []);
+      } else {
+        setUpcomingMatches([]);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Refresh when screen gains focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData();
+    });
+    return unsubscribe;
+  }, [navigation, fetchData]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
+
+  // Computed stats
+  const totalTeams = teams.length;
+  const matchesPlayed = standings.reduce((sum, r) => sum + r.played, 0) / 2;
+  const totalGoals = standings.reduce((sum, r) => sum + r.goalsFor, 0);
+  const seasonComplete = currentWeek > maxWeek;
+  const champion = seasonComplete && standings.length > 0 ? standings[0] : null;
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#e8b923" />
+        <Text style={styles.loadingText}>Loading LALIGA SIM...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.errorIcon}>⚠️</Text>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={fetchData}>
+          <Text style={styles.retryText}>Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#e8b923" />}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* ─── Header ───────────────────────────────────────────────────── */}
+      <LinearGradient
+        colors={['#1a1a2e', '#16213e', '#0f0f23']}
+        style={styles.header}
+      >
+        <Text style={styles.headerTitle}>⚽ LALIGA SIM</Text>
+        <Text style={styles.headerSubtitle}>Football League Simulator</Text>
+        <View style={styles.weekBadge}>
+          <Text style={styles.weekText}>
+            {seasonComplete ? '🏆 Season Complete' : `Week ${currentWeek} of ${maxWeek}`}
+          </Text>
+        </View>
+      </LinearGradient>
+
+      {/* ─── Champion Spotlight ────────────────────────────────────────── */}
+      {champion && (
+        <LinearGradient
+          colors={['#e8b923', '#f59e0b', '#d97706']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.championCard}
+        >
+          <Text style={styles.championTrophy}>🏆</Text>
+          <Text style={styles.championLabel}>CHAMPION</Text>
+          <Text style={styles.championName}>{champion.teamName}</Text>
+          <Text style={styles.championStats}>
+            {champion.points} pts • {champion.won}W {champion.drawn}D {champion.lost}L
+          </Text>
+        </LinearGradient>
+      )}
+
+      {/* ─── Stats Row ────────────────────────────────────────────────── */}
+      <Text style={styles.sectionTitle}>📊 League Overview</Text>
+      <View style={styles.statsRow}>
+        <StatCard icon="🏟" label="Teams" value={totalTeams} colors={['#1a1a2e', '#1e3a5f']} />
+        <StatCard icon="⚽" label="Matches" value={Math.round(matchesPlayed)} colors={['#1a1a2e', '#1e3a5f']} />
+        <StatCard icon="🥅" label="Goals" value={totalGoals} colors={['#1a1a2e', '#1e3a5f']} />
+      </View>
+
+      {/* ─── Recent Results ───────────────────────────────────────────── */}
+      {recentMatches.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>📋 Recent Results — Week {currentWeek - 1}</Text>
+          <FlatList
+            data={recentMatches}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => <MatchCard match={item} compact />}
+            contentContainerStyle={styles.horizontalList}
+          />
+        </>
+      )}
+
+      {/* ─── Upcoming Fixtures ────────────────────────────────────────── */}
+      {upcomingMatches.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>📅 Upcoming — Week {currentWeek}</Text>
+          <FlatList
+            data={upcomingMatches}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => <MatchCard match={item} compact />}
+            contentContainerStyle={styles.horizontalList}
+          />
+        </>
+      )}
+
+      {/* ─── Top Teams ────────────────────────────────────────────────── */}
+      {standings.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>🏆 Top 5 Teams</Text>
+          <View style={styles.topTeamsContainer}>
+            {standings.slice(0, 5).map((row, index) => (
+              <View key={row.teamId} style={styles.topTeamRow}>
+                <Text style={[styles.topTeamRank, index === 0 && styles.topTeamRankGold]}>
+                  {row.rank}
+                </Text>
+                <View style={[styles.topTeamBadge, { backgroundColor: row.primaryColor || '#334155' }]}>
+                  <Text style={styles.topTeamBadgeText}>{row.teamShortName}</Text>
+                </View>
+                <Text style={styles.topTeamName} numberOfLines={1}>{row.teamName}</Text>
+                <Text style={styles.topTeamPoints}>{row.points} pts</Text>
+              </View>
+            ))}
+          </View>
+        </>
+      )}
+
+      {/* ─── Top Scorers (Pichichi) ───────────────────────────────────── */}
+      {scorers.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>👟 Pichichi — Top Scorers</Text>
+          <View style={styles.scorersContainer}>
+            {scorers.slice(0, 5).map((scorer, index) => (
+              <View key={`${scorer.name}-${index}`} style={styles.scorerRow}>
+                <Text style={[styles.scorerRank, index === 0 && styles.topTeamRankGold]}>
+                  {index + 1}
+                </Text>
+                <View style={styles.scorerInfo}>
+                  <Text style={styles.scorerName}>{scorer.name}</Text>
+                  <Text style={styles.scorerTeam}>{scorer.teamName}</Text>
+                </View>
+                <View style={styles.goalsBadge}>
+                  <Text style={styles.goalsText}>{scorer.goals}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </>
+      )}
+
+      <View style={{ height: 30 }} />
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0f0f23',
+  },
+  content: {
+    paddingBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#0f0f23',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#94a3b8',
+    marginTop: 12,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 15,
+    textAlign: 'center',
+    paddingHorizontal: 32,
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#e8b923',
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  retryText: {
+    color: '#0f0f23',
+    fontWeight: '800',
+    fontSize: 15,
+  },
+  // ─── Header ────────────────────────────────────────────────────────
+  header: {
+    paddingTop: 60,
+    paddingBottom: 28,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  headerTitle: {
+    color: '#e8b923',
+    fontSize: 32,
+    fontWeight: '900',
+    letterSpacing: 2,
+  },
+  headerSubtitle: {
+    color: '#94a3b8',
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 4,
+  },
+  weekBadge: {
+    marginTop: 12,
+    backgroundColor: 'rgba(232, 185, 35, 0.15)',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(232, 185, 35, 0.3)',
+  },
+  weekText: {
+    color: '#e8b923',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  // ─── Champion ──────────────────────────────────────────────────────
+  championCard: {
+    margin: 16,
+    padding: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    shadowColor: '#e8b923',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  championTrophy: {
+    fontSize: 42,
+    marginBottom: 6,
+  },
+  championLabel: {
+    color: '#0f0f23',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+  },
+  championName: {
+    color: '#0f0f23',
+    fontSize: 24,
+    fontWeight: '900',
+    marginTop: 4,
+  },
+  championStats: {
+    color: 'rgba(15,15,35,0.7)',
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  // ─── Sections ──────────────────────────────────────────────────────
+  sectionTitle: {
+    color: '#f1f5f9',
+    fontSize: 18,
+    fontWeight: '800',
+    marginHorizontal: 16,
+    marginTop: 24,
+    marginBottom: 12,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    gap: 4,
+  },
+  horizontalList: {
+    paddingHorizontal: 10,
+  },
+  // ─── Top Teams ─────────────────────────────────────────────────────
+  topTeamsContainer: {
+    marginHorizontal: 16,
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#334155',
+  },
+  topTeamRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1e293b',
+  },
+  topTeamRank: {
+    color: '#94a3b8',
+    fontSize: 16,
+    fontWeight: '800',
+    width: 28,
+    textAlign: 'center',
+  },
+  topTeamRankGold: {
+    color: '#e8b923',
+  },
+  topTeamBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  topTeamBadgeText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '800',
+  },
+  topTeamName: {
+    color: '#f1f5f9',
+    fontSize: 14,
+    fontWeight: '600',
+    flex: 1,
+  },
+  topTeamPoints: {
+    color: '#e8b923',
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  // ─── Top Scorers ───────────────────────────────────────────────────
+  scorersContainer: {
+    marginHorizontal: 16,
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#334155',
+  },
+  scorerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1e293b',
+  },
+  scorerRank: {
+    color: '#94a3b8',
+    fontSize: 16,
+    fontWeight: '800',
+    width: 28,
+    textAlign: 'center',
+  },
+  scorerInfo: {
+    flex: 1,
+    marginLeft: 8,
+  },
+  scorerName: {
+    color: '#f1f5f9',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  scorerTeam: {
+    color: '#94a3b8',
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 1,
+  },
+  goalsBadge: {
+    backgroundColor: '#16213e',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#334155',
+  },
+  goalsText: {
+    color: '#e8b923',
+    fontSize: 16,
+    fontWeight: '900',
+  },
+});
+
+export default HomeScreen;
