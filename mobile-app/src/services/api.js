@@ -3,7 +3,7 @@
 // Points to the production Render deployment by default.
 // For local dev, switch API_BASE to http://<your-lan-ip>:5000/api
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'https://football-simulator-api-72l4.onrender.com/api';
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`;
