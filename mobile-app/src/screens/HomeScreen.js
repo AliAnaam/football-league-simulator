@@ -8,10 +8,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import StatCard from '../components/StatCard';
 import MatchCard from '../components/MatchCard';
 import TeamLogo from '../components/TeamLogo';
+import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
 import { COLORS } from '../theme';
 
 const HomeScreen = ({ navigation }) => {
+  const { user, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
@@ -123,6 +125,13 @@ const HomeScreen = ({ navigation }) => {
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
+        <View style={styles.userHeaderRow}>
+          <Text style={styles.userGreeting}>Welcome, {user?.username || 'Fan'}</Text>
+          <TouchableOpacity style={styles.logoutBtn} onPress={logout} activeOpacity={0.8}>
+            <Text style={styles.logoutText}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
+
         <Image
           source={require('../../assets/laliga-logo.png')}
           style={styles.headerLogo}
@@ -286,12 +295,37 @@ const styles = StyleSheet.create({
   },
   // ─── Header ────────────────────────────────────────────────────────
   header: {
-    paddingTop: 60,
+    paddingTop: 50,
     paddingBottom: 28,
     paddingHorizontal: 20,
     alignItems: 'center',
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+  },
+  userHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 12,
+  },
+  userGreeting: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  logoutBtn: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  logoutText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
   },
   headerLogo: {
     width: 180,

@@ -78,3 +78,9 @@ export const login = (username, password) =>
     method: 'POST',
     body: JSON.stringify({ username, password }),
   });
+
+export const register = (username, password) =>
+  request('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ username, password }),
+  });
