@@ -41,6 +41,12 @@ async function request(path, options = {}) {
 // ─── Teams ───────────────────────────────────────────────────────────────────
 export const getTeams = () => request('/teams');
 export const getTeamById = (id) => request(`/teams/${id}`);
+export const createTeam = (teamData) =>
+  request('/teams', { method: 'POST', body: JSON.stringify(teamData) });
+export const updateTeam = (id, teamData) =>
+  request(`/teams/${id}`, { method: 'PUT', body: JSON.stringify(teamData) });
+export const deleteTeam = (id) =>
+  request(`/teams/${id}`, { method: 'DELETE' });
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 export const getFixtures = () => request('/fixtures');

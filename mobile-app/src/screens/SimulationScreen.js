@@ -191,7 +191,7 @@ const SimulationScreen = ({ navigation }) => {
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
-        <Text style={styles.title}>⚡ Simulation</Text>
+        <Text style={styles.title}>Simulation</Text>
         <Text style={styles.subtitle}>Match Engine Control Panel</Text>
       </LinearGradient>
 
@@ -302,7 +302,7 @@ const SimulationScreen = ({ navigation }) => {
       {lastResults && lastResults.results && (
         <>
           <Text style={styles.resultsTitle}>
-            📋 Week {lastResults.week} Results
+            Week {lastResults.week} Results
           </Text>
           {lastResults.results.map((result, index) => {
             const fadeAnim = fadeAnims[index] || new Animated.Value(1);

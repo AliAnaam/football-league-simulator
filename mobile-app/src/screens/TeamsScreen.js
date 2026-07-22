@@ -4,6 +4,7 @@ import {
   ActivityIndicator, TouchableOpacity, TextInput,
 } from 'react-native';
 import TeamCard from '../components/TeamCard';
+import TeamFormModal from '../components/TeamFormModal';
 import * as api from '../services/api';
 import { COLORS } from '../theme';
 
@@ -14,6 +15,7 @@ const TeamsScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
   const fetchTeams = useCallback(async () => {
     try {
@@ -63,6 +65,11 @@ const TeamsScreen = ({ navigation }) => {
     fetchTeams();
   };
 
+  const handleCreateTeam = async (teamData) => {
+    await api.createTeam(teamData);
+    await fetchTeams();
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -88,8 +95,19 @@ const TeamsScreen = ({ navigation }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>🏟 Teams</Text>
-        <Text style={styles.subtitle}>{teams.length} clubs in the league</Text>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.title}>Teams</Text>
+            <Text style={styles.subtitle}>{teams.length} clubs in the league</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.addBtn}
+            onPress={() => setIsAddModalVisible(true)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.addBtnText}>+ Add Team</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Search Bar */}
@@ -130,6 +148,14 @@ const TeamsScreen = ({ navigation }) => {
             <Text style={styles.emptyText}>No teams found</Text>
           </View>
         }
+      />
+
+      {/* Add Team Modal */}
+      <TeamFormModal
+        visible={isAddModalVisible}
+        team={null}
+        onClose={() => setIsAddModalVisible(false)}
+        onSubmit={handleCreateTeam}
       />
     </View>
   );
@@ -184,6 +210,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.borderAccent,
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   title: {
     color: COLORS.textPrimary,
     fontSize: 28,
@@ -194,6 +225,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     marginTop: 4,
+  },
+  addBtn: {
+    backgroundColor: COLORS.accentPrimary,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+    shadowColor: COLORS.accentPrimary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addBtnText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '800',
   },
   searchContainer: {
     flexDirection: 'row',
