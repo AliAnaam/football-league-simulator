@@ -154,17 +154,17 @@ const HomeScreen = ({ navigation }) => {
       )}
 
       {/* ─── Stats Row ────────────────────────────────────────────────── */}
-      <Text style={styles.sectionTitle}>📊 League Overview</Text>
+      <Text style={styles.sectionTitle}>League Overview</Text>
       <View style={styles.statsRow}>
         <StatCard icon="🏟" label="Teams" value={totalTeams} colors={['#FF4B44', '#e8443d']} />
-        <StatCard icon="⚽" label="Matches" value={Math.round(matchesPlayed)} colors={['#FF4B44', '#e8443d']} />
-        <StatCard icon="🥅" label="Goals" value={totalGoals} colors={['#FF4B44', '#e8443d']} />
+        <StatCard icon="🥅" label="Matches" value={Math.round(matchesPlayed)} colors={['#FF4B44', '#e8443d']} />
+        <StatCard icon="⚽" label="Goals" value={totalGoals} colors={['#FF4B44', '#e8443d']} />
       </View>
 
       {/* ─── Recent Results ───────────────────────────────────────────── */}
       {recentMatches.length > 0 && (
         <>
-          <Text style={styles.sectionTitle}>📋 Recent Results — Week {currentWeek - 1}</Text>
+          <Text style={styles.sectionTitle}>Recent Results — Week {currentWeek - 1}</Text>
           <FlatList
             data={recentMatches}
             horizontal
@@ -179,7 +179,7 @@ const HomeScreen = ({ navigation }) => {
       {/* ─── Upcoming Fixtures ────────────────────────────────────────── */}
       {upcomingMatches.length > 0 && (
         <>
-          <Text style={styles.sectionTitle}>📅 Upcoming — Week {currentWeek}</Text>
+          <Text style={styles.sectionTitle}>Upcoming — Week {currentWeek}</Text>
           <FlatList
             data={upcomingMatches}
             horizontal
@@ -194,7 +194,7 @@ const HomeScreen = ({ navigation }) => {
       {/* ─── Top Teams ────────────────────────────────────────────────── */}
       {standings.length > 0 && (
         <>
-          <Text style={styles.sectionTitle}>🏆 Top 5 Teams</Text>
+          <Text style={styles.sectionTitle}>Top 5 Teams</Text>
           <View style={styles.topTeamsContainer}>
             {standings.slice(0, 5).map((row, index) => (
               <View key={row.teamId} style={styles.topTeamRow}>
@@ -217,7 +217,7 @@ const HomeScreen = ({ navigation }) => {
       {/* ─── Top Scorers (Pichichi) ───────────────────────────────────── */}
       {scorers.length > 0 && (
         <>
-          <Text style={styles.sectionTitle}>👟 Pichichi — Top Scorers</Text>
+          <Text style={styles.sectionTitle}>Pichichi — Top Scorers</Text>
           <View style={styles.scorersContainer}>
             {scorers.slice(0, 5).map((scorer, index) => (
               <View key={`${scorer.name}-${index}`} style={styles.scorerRow}>
@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 100,
     marginBottom: 4,
+    tintColor: '#ffffff',
   },
   headerSubtitle: {
     color: 'rgba(255,255,255,0.75)',

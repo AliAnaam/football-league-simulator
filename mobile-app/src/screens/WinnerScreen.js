@@ -84,6 +84,7 @@ const ConfettiParticle = ({ delay, color }) => {
 // ─── WinnerScreen ────────────────────────────────────────────────────────────
 const WinnerScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
+  const [resetting, setResetting] = useState(false);
   const [champion, setChampion] = useState(null);
   const [standings, setStandings] = useState([]);
   const [error, setError] = useState(null);
@@ -268,7 +269,7 @@ const WinnerScreen = ({ navigation }) => {
 
         {/* Final Standings Summary */}
         <Animated.View style={[styles.standingsSection, { opacity: listOpacity }]}>
-          <Text style={styles.standingsTitle}>📊 Final Standings</Text>
+          <Text style={styles.standingsTitle}>Final Standings</Text>
           {standings.slice(0, 10).map((row, index) => (
             <View key={row.teamId} style={[styles.standingsRowItem, index === 0 && styles.standingsRowChampion]}>
               <Text style={[styles.standingsRank, index === 0 && styles.standingsRankGold]}>
@@ -292,22 +293,35 @@ const WinnerScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('Standings')}
             activeOpacity={0.8}
           >
-            <Text style={styles.viewStandingsBtnText}>📊 View Full Standings</Text>
+            <Text style={styles.viewStandingsBtnText}>View Full Standings</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.newSeasonBtn}
+            style={[styles.newSeasonBtn, resetting && { opacity: 0.6 }]}
+            disabled={resetting}
             onPress={async () => {
+              if (resetting) return;
+              setResetting(true);
               try {
                 await api.resetSeason();
-                navigation.navigate('Simulate');
+                if (navigation.canGoBack()) {
+                  navigation.popToTop();
+                } else {
+                  navigation.navigate('SimulateMain');
+                }
               } catch (err) {
                 setError(err.message);
+              } finally {
+                setResetting(false);
               }
             }}
             activeOpacity={0.8}
           >
-            <Text style={styles.newSeasonBtnText}>🔄 New Season</Text>
+            {resetting ? (
+              <ActivityIndicator size="small" color={COLORS.accentPrimary} />
+            ) : (
+              <Text style={styles.newSeasonBtnText}>New Season</Text>
+            )}
           </TouchableOpacity>
         </View>
 

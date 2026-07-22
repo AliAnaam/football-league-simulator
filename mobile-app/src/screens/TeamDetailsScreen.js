@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  ActivityIndicator, TouchableOpacity,
+  ActivityIndicator, TouchableOpacity, Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import TeamLogo from '../components/TeamLogo';
+import TeamFormModal from '../components/TeamFormModal';
 import * as api from '../services/api';
 import { COLORS } from '../theme';
 
@@ -14,28 +15,61 @@ const TeamDetailsScreen = ({ route, navigation }) => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setError(null);
+      const [teamData, standingsData] = await Promise.all([
+        api.getTeamById(teamId),
+        api.getStandings(),
+      ]);
+      setTeam(teamData);
+
+      // Find this team's standings row
+      const row = (standingsData || []).find((r) => r.teamId === teamId);
+      setStats(row || null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [teamId]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setError(null);
-        const [teamData, standingsData] = await Promise.all([
-          api.getTeamById(teamId),
-          api.getStandings(),
-        ]);
-        setTeam(teamData);
-
-        // Find this team's standings row
-        const row = (standingsData || []).find((r) => r.teamId === teamId);
-        setStats(row || null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
-  }, [teamId]);
+  }, [fetchData]);
+
+  const handleUpdateTeam = async (updatedData) => {
+    await api.updateTeam(teamId, updatedData);
+    await fetchData();
+  };
+
+  const handleDeleteTeam = () => {
+    if (!team) return;
+
+    Alert.alert(
+      'Delete Team',
+      `Are you sure you want to delete ${team.name}? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
+              await api.deleteTeam(teamId);
+              navigation.goBack();
+            } catch (err) {
+              setError(err.message);
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
 
   if (loading) {
     return (
@@ -77,6 +111,27 @@ const TeamDetailsScreen = ({ route, navigation }) => {
         end={{ x: 0, y: 1 }}
         style={styles.hero}
       >
+        {/* Top Header Buttons: Back, Edit, Delete */}
+        <View style={styles.heroActions}>
+          <TouchableOpacity style={styles.actionIconBtn} onPress={() => navigation.goBack()}>
+            <Text style={styles.actionIconText}>← Back</Text>
+          </TouchableOpacity>
+          <View style={styles.rightActions}>
+            <TouchableOpacity
+              style={styles.actionIconBtn}
+              onPress={() => setIsEditModalVisible(true)}
+            >
+              <Text style={styles.actionIconText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionIconBtn, styles.deleteBtn]}
+              onPress={handleDeleteTeam}
+            >
+              <Text style={[styles.actionIconText, styles.deleteBtnText]}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Large Logo */}
         <TeamLogo
           team={team}
@@ -116,7 +171,7 @@ const TeamDetailsScreen = ({ route, navigation }) => {
       </LinearGradient>
 
       {/* Stats Grid */}
-      <Text style={styles.sectionTitle}>📊 Season Statistics</Text>
+      <Text style={styles.sectionTitle}>Season Statistics</Text>
       <View style={styles.statsGrid}>
         {statItems.map((item, index) => (
           <View key={index} style={styles.statCard}>
@@ -130,7 +185,7 @@ const TeamDetailsScreen = ({ route, navigation }) => {
       {/* Form Guide */}
       {stats?.form && stats.form.length > 0 && (
         <>
-          <Text style={styles.sectionTitle}>📈 Recent Form</Text>
+          <Text style={styles.sectionTitle}>Recent Form</Text>
           <View style={styles.formContainer}>
             {stats.form.map((result, index) => {
               // Backend sends: G = win, B = draw, M = loss
@@ -158,6 +213,14 @@ const TeamDetailsScreen = ({ route, navigation }) => {
           </View>
         </View>
       )}
+
+      {/* Edit Team Modal */}
+      <TeamFormModal
+        visible={isEditModalVisible}
+        team={team}
+        onClose={() => setIsEditModalVisible(false)}
+        onSubmit={handleUpdateTeam}
+      />
 
       <View style={{ height: 40 }} />
     </ScrollView>
@@ -199,11 +262,43 @@ const styles = StyleSheet.create({
   },
   // ─── Hero ──────────────────────────────────────────────────────────
   hero: {
-    paddingTop: 60,
+    paddingTop: 50,
     paddingBottom: 28,
     alignItems: 'center',
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
+  },
+  heroActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  rightActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionIconBtn: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  actionIconText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  deleteBtn: {
+    backgroundColor: 'rgba(239, 68, 68, 0.25)',
+    borderColor: 'rgba(239, 68, 68, 0.5)',
+  },
+  deleteBtnText: {
+    color: '#ffffff',
   },
   heroLogo: {
     marginBottom: 14,

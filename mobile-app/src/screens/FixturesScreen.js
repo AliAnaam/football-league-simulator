@@ -102,7 +102,7 @@ const FixturesScreen = ({ navigation }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>📅 Fixtures</Text>
+        <Text style={styles.title}>Fixtures</Text>
         <Text style={styles.subtitle}>Season Schedule</Text>
       </View>
 

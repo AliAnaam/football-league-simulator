@@ -68,7 +68,7 @@ const StandingsScreen = ({ navigation }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>🏆 Standings</Text>
+        <Text style={styles.title}>Standings</Text>
         <Text style={styles.subtitle}>LaLiga Points Table</Text>
       </View>
 
