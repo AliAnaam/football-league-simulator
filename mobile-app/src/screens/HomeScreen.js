@@ -3,10 +3,13 @@ import {
   View, Text, StyleSheet, ScrollView, RefreshControl,
   ActivityIndicator, FlatList, TouchableOpacity,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import StatCard from '../components/StatCard';
 import MatchCard from '../components/MatchCard';
+import TeamLogo from '../components/TeamLogo';
 import * as api from '../services/api';
+import { COLORS } from '../theme';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -88,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#e8b923" />
+        <ActivityIndicator size="large" color={COLORS.accentPrimary} />
         <Text style={styles.loadingText}>Loading LALIGA SIM...</Text>
       </View>
     );
@@ -110,15 +113,21 @@ const HomeScreen = ({ navigation }) => {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#e8b923" />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.accentPrimary} />}
       showsVerticalScrollIndicator={false}
     >
       {/* ─── Header ───────────────────────────────────────────────────── */}
       <LinearGradient
-        colors={['#1a1a2e', '#16213e', '#0f0f23']}
+        colors={['#c0392b', '#e8443d', '#FF4B44']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         style={styles.header}
       >
-        <Text style={styles.headerTitle}>⚽ LALIGA SIM</Text>
+        <Image
+          source={require('../../assets/laliga-logo.png')}
+          style={styles.headerLogo}
+          contentFit="contain"
+        />
         <Text style={styles.headerSubtitle}>Football League Simulator</Text>
         <View style={styles.weekBadge}>
           <Text style={styles.weekText}>
@@ -147,9 +156,9 @@ const HomeScreen = ({ navigation }) => {
       {/* ─── Stats Row ────────────────────────────────────────────────── */}
       <Text style={styles.sectionTitle}>📊 League Overview</Text>
       <View style={styles.statsRow}>
-        <StatCard icon="🏟" label="Teams" value={totalTeams} colors={['#1a1a2e', '#1e3a5f']} />
-        <StatCard icon="⚽" label="Matches" value={Math.round(matchesPlayed)} colors={['#1a1a2e', '#1e3a5f']} />
-        <StatCard icon="🥅" label="Goals" value={totalGoals} colors={['#1a1a2e', '#1e3a5f']} />
+        <StatCard icon="🏟" label="Teams" value={totalTeams} colors={['#FF4B44', '#e8443d']} />
+        <StatCard icon="⚽" label="Matches" value={Math.round(matchesPlayed)} colors={['#FF4B44', '#e8443d']} />
+        <StatCard icon="🥅" label="Goals" value={totalGoals} colors={['#FF4B44', '#e8443d']} />
       </View>
 
       {/* ─── Recent Results ───────────────────────────────────────────── */}
@@ -192,9 +201,11 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={[styles.topTeamRank, index === 0 && styles.topTeamRankGold]}>
                   {row.rank}
                 </Text>
-                <View style={[styles.topTeamBadge, { backgroundColor: row.primaryColor || '#334155' }]}>
-                  <Text style={styles.topTeamBadgeText}>{row.teamShortName}</Text>
-                </View>
+                <TeamLogo
+                  team={{ shortName: row.teamShortName, logoUrl: row.logoUrl, primaryColor: row.primaryColor }}
+                  size={32}
+                  style={styles.topTeamLogoImg}
+                />
                 <Text style={styles.topTeamName} numberOfLines={1}>{row.teamName}</Text>
                 <Text style={styles.topTeamPoints}>{row.points} pts</Text>
               </View>
@@ -234,19 +245,19 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
   },
   content: {
     paddingBottom: 20,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     marginTop: 12,
     fontSize: 15,
     fontWeight: '600',
@@ -256,20 +267,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   errorText: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontSize: 15,
     textAlign: 'center',
     paddingHorizontal: 32,
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#e8b923',
+    backgroundColor: COLORS.accentPrimary,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
   },
   retryText: {
-    color: '#0f0f23',
+    color: COLORS.textOnAccent,
     fontWeight: '800',
     fontSize: 15,
   },
@@ -282,29 +293,28 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
-  headerTitle: {
-    color: '#e8b923',
-    fontSize: 32,
-    fontWeight: '900',
-    letterSpacing: 2,
+  headerLogo: {
+    width: 180,
+    height: 100,
+    marginBottom: 4,
   },
   headerSubtitle: {
-    color: '#94a3b8',
+    color: 'rgba(255,255,255,0.75)',
     fontSize: 14,
     fontWeight: '500',
     marginTop: 4,
   },
   weekBadge: {
     marginTop: 12,
-    backgroundColor: 'rgba(232, 185, 35, 0.15)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(232, 185, 35, 0.3)',
+    borderColor: 'rgba(255,255,255,0.25)',
   },
   weekText: {
-    color: '#e8b923',
+    color: '#ffffff',
     fontSize: 13,
     fontWeight: '700',
   },
@@ -314,7 +324,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     alignItems: 'center',
-    shadowColor: '#e8b923',
+    shadowColor: COLORS.gold,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -345,12 +355,12 @@ const styles = StyleSheet.create({
   },
   // ─── Sections ──────────────────────────────────────────────────────
   sectionTitle: {
-    color: '#f1f5f9',
-    fontSize: 18,
+    color: COLORS.textPrimary,
+    fontSize: 17,
     fontWeight: '800',
     marginHorizontal: 16,
     marginTop: 24,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   statsRow: {
     flexDirection: 'row',
@@ -363,73 +373,71 @@ const styles = StyleSheet.create({
   // ─── Top Teams ─────────────────────────────────────────────────────
   topTeamsContainer: {
     marginHorizontal: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 16,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   topTeamRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: COLORS.bgPrimary,
   },
   topTeamRank: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 16,
     fontWeight: '800',
     width: 28,
     textAlign: 'center',
   },
   topTeamRankGold: {
-    color: '#e8b923',
+    color: COLORS.gold,
   },
-  topTeamBadge: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+  topTeamLogoImg: {
     marginRight: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  topTeamBadgeText: {
-    color: '#fff',
-    fontSize: 9,
-    fontWeight: '800',
   },
   topTeamName: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 14,
     fontWeight: '600',
     flex: 1,
   },
   topTeamPoints: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 14,
     fontWeight: '800',
   },
   // ─── Top Scorers ───────────────────────────────────────────────────
   scorersContainer: {
     marginHorizontal: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 16,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   scorerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: COLORS.bgPrimary,
   },
   scorerRank: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 16,
     fontWeight: '800',
     width: 28,
@@ -440,26 +448,26 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   scorerName: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 14,
     fontWeight: '700',
   },
   scorerTeam: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 11,
     fontWeight: '500',
     marginTop: 1,
   },
   goalsBadge: {
-    backgroundColor: '#16213e',
+    backgroundColor: COLORS.accentXLight,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.borderAccent,
   },
   goalsText: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 16,
     fontWeight: '900',
   },

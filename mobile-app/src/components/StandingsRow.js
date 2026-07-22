@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import TeamLogo from './TeamLogo';
+import { COLORS } from '../theme';
 
 // ─── StandingsRow Component ──────────────────────────────────────────────────
 const StandingsRow = ({ row, isHeader = false }) => {
@@ -29,9 +31,9 @@ const StandingsRow = ({ row, isHeader = false }) => {
   };
 
   const getPositionIndicator = (rank) => {
-    if (rank === 1) return '#e8b923';   // Gold — champion
-    if (rank <= 4) return '#10b981';    // Green — UCL
-    if (rank >= 18) return '#ef4444';   // Red — relegation
+    if (rank === 1) return COLORS.gold;       // Gold — champion
+    if (rank <= 4) return COLORS.success;     // Green — UCL
+    if (rank >= 18) return COLORS.error;      // Red — relegation
     return 'transparent';
   };
 
@@ -45,9 +47,10 @@ const StandingsRow = ({ row, isHeader = false }) => {
       </Text>
 
       <View style={[styles.cell, styles.teamCell, styles.teamInfo]}>
-        <View style={[styles.miniBadge, { backgroundColor: row.primaryColor || '#334155' }]}>
-          <Text style={styles.miniBadgeText}>{row.teamShortName}</Text>
-        </View>
+        <TeamLogo
+          team={{ shortName: row.teamShortName, logoUrl: row.logoUrl, primaryColor: row.primaryColor }}
+          size={24}
+        />
         <Text style={styles.teamName} numberOfLines={1}>{row.teamName}</Text>
       </View>
 
@@ -72,22 +75,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: COLORS.bgPrimary,
     position: 'relative',
   },
   rowAlt: {
-    backgroundColor: 'rgba(22, 33, 62, 0.4)',
+    backgroundColor: '#fafafa',
   },
   headerRow: {
-    backgroundColor: '#16213e',
+    backgroundColor: COLORS.bgCardAlt,
     borderBottomWidth: 2,
-    borderBottomColor: '#334155',
+    borderBottomColor: COLORS.borderAccent,
     paddingVertical: 12,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
   headerText: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     fontWeight: '800',
     fontSize: 11,
     textTransform: 'uppercase',
@@ -101,7 +104,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   cell: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 12,
     textAlign: 'center',
   },
@@ -111,15 +114,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   posChampion: {
-    color: '#e8b923',
+    color: COLORS.gold,
     fontWeight: '900',
   },
   posUCL: {
-    color: '#10b981',
+    color: COLORS.success,
     fontWeight: '800',
   },
   posRelegation: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontWeight: '800',
   },
   teamCell: {
@@ -132,25 +135,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
-  miniBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  miniBadgeText: {
-    color: '#fff',
-    fontSize: 8,
-    fontWeight: '800',
-  },
   teamName: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 12,
     fontWeight: '600',
     flexShrink: 1,
+    marginLeft: 4,
   },
   statCell: {
     width: 28,
@@ -158,22 +148,22 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   winCell: {
-    color: '#10b981',
+    color: COLORS.success,
   },
   lossCell: {
-    color: '#ef4444',
+    color: COLORS.error,
   },
   ptsCell: {
     width: 32,
     fontWeight: '900',
     fontSize: 13,
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
   },
   gdPositive: {
-    color: '#10b981',
+    color: COLORS.success,
   },
   gdNegative: {
-    color: '#ef4444',
+    color: COLORS.error,
   },
 });
 

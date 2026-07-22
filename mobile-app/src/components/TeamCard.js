@@ -1,17 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
-// ─── Team Badge (colored circle with team initials) ──────────────────────────
-const TeamBadge = ({ shortName, primaryColor, size = 48 }) => (
-  <View style={[styles.badge, { width: size, height: size, borderRadius: size / 2, backgroundColor: primaryColor || '#334155' }]}>
-    <Text style={[styles.badgeText, { fontSize: size * 0.35 }]}>{shortName || '??'}</Text>
-  </View>
-);
+import TeamLogo from './TeamLogo';
+import { COLORS } from '../theme';
 
 // ─── TeamCard Component ──────────────────────────────────────────────────────
 const TeamCard = ({ team, onPress }) => {
   const powerPercent = Math.min(100, Math.max(0, team.power));
   const moralePercent = Math.min(100, Math.max(0, team.morale));
+
+  const powerBarColor = powerPercent >= 80 ? COLORS.gold
+    : powerPercent >= 60 ? COLORS.success
+    : COLORS.accentPrimary;
+
+  const moraleBarColor = moralePercent >= 70 ? COLORS.success
+    : moralePercent >= 40 ? COLORS.warning
+    : COLORS.error;
 
   return (
     <TouchableOpacity
@@ -20,11 +23,7 @@ const TeamCard = ({ team, onPress }) => {
       activeOpacity={0.7}
     >
       <View style={styles.row}>
-        <TeamBadge
-          shortName={team.shortName}
-          primaryColor={team.primaryColor}
-          size={52}
-        />
+        <TeamLogo team={team} size={52} style={styles.logo} />
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={1}>{team.name}</Text>
           <Text style={styles.stadium} numberOfLines={1}>🏟 {team.stadium}</Text>
@@ -36,10 +35,7 @@ const TeamCard = ({ team, onPress }) => {
               <View
                 style={[
                   styles.barFill,
-                  {
-                    width: `${powerPercent}%`,
-                    backgroundColor: powerPercent >= 80 ? '#e8b923' : powerPercent >= 60 ? '#10b981' : '#3b82f6',
-                  },
+                  { width: `${powerPercent}%`, backgroundColor: powerBarColor },
                 ]}
               />
             </View>
@@ -53,10 +49,7 @@ const TeamCard = ({ team, onPress }) => {
               <View
                 style={[
                   styles.barFill,
-                  {
-                    width: `${moralePercent}%`,
-                    backgroundColor: moralePercent >= 70 ? '#10b981' : moralePercent >= 40 ? '#f59e0b' : '#ef4444',
-                  },
+                  { width: `${moralePercent}%`, backgroundColor: moraleBarColor },
                 ]}
               />
             </View>
@@ -70,46 +63,37 @@ const TeamCard = ({ team, onPress }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 16,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 6,
     borderWidth: 1,
-    borderColor: '#334155',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  badge: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  logo: {
     marginRight: 14,
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.15)',
-  },
-  badgeText: {
-    color: '#fff',
-    fontWeight: '800',
-    letterSpacing: 0.5,
   },
   info: {
     flex: 1,
   },
   name: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 17,
     fontWeight: '700',
     marginBottom: 2,
   },
   stadium: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     fontSize: 13,
     marginBottom: 8,
   },
@@ -119,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   statLabel: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 11,
     width: 45,
     fontWeight: '600',
@@ -127,17 +111,19 @@ const styles = StyleSheet.create({
   barTrack: {
     flex: 1,
     height: 6,
-    backgroundColor: '#334155',
+    backgroundColor: COLORS.bgPrimary,
     borderRadius: 3,
     overflow: 'hidden',
     marginHorizontal: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   barFill: {
     height: '100%',
     borderRadius: 3,
   },
   statValue: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 12,
     fontWeight: '700',
     width: 32,

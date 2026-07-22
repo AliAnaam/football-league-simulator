@@ -1,0 +1,1 @@
+sh: /Users/alianaam/Desktop/football-league-simulator/mobile-app/node_modules/.bin/expo: /usr/bin/env: bad interpreter: Operation canceled
