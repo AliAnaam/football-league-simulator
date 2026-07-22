@@ -4,7 +4,9 @@ import {
   ActivityIndicator, Animated, Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import TeamLogo from '../components/TeamLogo';
 import * as api from '../services/api';
+import { COLORS } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -154,12 +156,12 @@ const WinnerScreen = ({ navigation }) => {
     }
   }, [loading, champion]);
 
-  const confettiColors = ['#e8b923', '#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+  const confettiColors = [COLORS.gold, '#f59e0b', COLORS.error, COLORS.success, '#3b82f6', '#8b5cf6', '#ec4899'];
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#e8b923" />
+        <ActivityIndicator size="large" color={COLORS.accentPrimary} />
         <Text style={styles.loadingText}>Loading champion...</Text>
       </View>
     );
@@ -225,7 +227,7 @@ const WinnerScreen = ({ navigation }) => {
           <Text style={styles.championLabel}>CHAMPION</Text>
 
           <LinearGradient
-            colors={['#e8b923', '#f59e0b', '#d97706']}
+            colors={[COLORS.gold, '#f59e0b', '#d97706']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.championNameGradient}
@@ -233,10 +235,12 @@ const WinnerScreen = ({ navigation }) => {
             <Text style={styles.championName}>{champion.teamName}</Text>
           </LinearGradient>
 
-          {/* Champion Badge */}
-          <View style={[styles.championBadge, { backgroundColor: champion.primaryColor || '#334155' }]}>
-            <Text style={styles.championBadgeText}>{champion.teamShortName}</Text>
-          </View>
+          {/* Champion Logo */}
+          <TeamLogo
+            team={{ shortName: champion.teamShortName, logoUrl: champion.logoUrl, primaryColor: champion.primaryColor }}
+            size={80}
+            style={styles.championLogo}
+          />
 
           {/* Champion Stats */}
           <View style={styles.championStatsRow}>
@@ -270,9 +274,11 @@ const WinnerScreen = ({ navigation }) => {
               <Text style={[styles.standingsRank, index === 0 && styles.standingsRankGold]}>
                 {row.rank}
               </Text>
-              <View style={[styles.standingsBadge, { backgroundColor: row.primaryColor || '#334155' }]}>
-                <Text style={styles.standingsBadgeText}>{row.teamShortName}</Text>
-              </View>
+              <TeamLogo
+                team={{ shortName: row.teamShortName, logoUrl: row.logoUrl, primaryColor: row.primaryColor }}
+                size={28}
+                style={styles.standingsLogo}
+              />
               <Text style={styles.standingsTeamName} numberOfLines={1}>{row.teamName}</Text>
               <Text style={styles.standingsPoints}>{row.points} pts</Text>
             </View>
@@ -314,7 +320,7 @@ const WinnerScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
   },
   scrollView: {
     flex: 1,
@@ -325,12 +331,12 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     marginTop: 12,
     fontSize: 15,
     fontWeight: '600',
@@ -340,20 +346,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   errorText: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontSize: 15,
     textAlign: 'center',
     paddingHorizontal: 32,
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#e8b923',
+    backgroundColor: COLORS.accentPrimary,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
   },
   retryText: {
-    color: '#0f0f23',
+    color: COLORS.textOnAccent,
     fontWeight: '800',
     fontSize: 15,
   },
@@ -383,7 +389,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   championLabel: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 14,
     fontWeight: '900',
     letterSpacing: 6,
@@ -403,34 +409,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 1,
   },
-  championBadge: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(232, 185, 35, 0.5)',
+  championLogo: {
     marginBottom: 24,
-    shadowColor: '#e8b923',
+    borderWidth: 3,
+    borderColor: COLORS.borderAccent,
+    shadowColor: COLORS.accentPrimary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
   },
-  championBadgeText: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '900',
-  },
   championStatsRow: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
     width: '100%',
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   champStatItem: {
     flex: 1,
@@ -438,15 +439,15 @@ const styles = StyleSheet.create({
   },
   champStatDivider: {
     width: 1,
-    backgroundColor: '#334155',
+    backgroundColor: COLORS.border,
   },
   champStatValue: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 24,
     fontWeight: '900',
   },
   champStatLabel: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -456,14 +457,19 @@ const styles = StyleSheet.create({
   standingsSection: {
     marginTop: 28,
     marginHorizontal: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   standingsTitle: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 12,
@@ -473,7 +479,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: COLORS.bgPrimary,
   },
   standingsRowChampion: {
     backgroundColor: 'rgba(232, 185, 35, 0.08)',
@@ -482,38 +488,26 @@ const styles = StyleSheet.create({
     marginHorizontal: -8,
   },
   standingsRank: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 16,
     fontWeight: '800',
     width: 28,
     textAlign: 'center',
   },
   standingsRankGold: {
-    color: '#e8b923',
+    color: COLORS.gold,
   },
-  standingsBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
+  standingsLogo: {
     marginRight: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  standingsBadgeText: {
-    color: '#fff',
-    fontSize: 9,
-    fontWeight: '800',
   },
   standingsTeamName: {
     flex: 1,
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 14,
     fontWeight: '600',
   },
   standingsPoints: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 14,
     fontWeight: '800',
   },
@@ -524,28 +518,33 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   viewStandingsBtn: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   viewStandingsBtnText: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: '700',
   },
   newSeasonBtn: {
-    backgroundColor: 'rgba(232, 185, 35, 0.1)',
+    backgroundColor: COLORS.accentXLight,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(232, 185, 35, 0.3)',
+    borderColor: COLORS.borderAccent,
   },
   newSeasonBtnText: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 15,
     fontWeight: '700',
   },

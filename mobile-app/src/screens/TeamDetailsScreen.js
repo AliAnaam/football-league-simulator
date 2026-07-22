@@ -4,7 +4,9 @@ import {
   ActivityIndicator, TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import TeamLogo from '../components/TeamLogo';
 import * as api from '../services/api';
+import { COLORS } from '../theme';
 
 const TeamDetailsScreen = ({ route, navigation }) => {
   const { teamId } = route.params;
@@ -38,7 +40,7 @@ const TeamDetailsScreen = ({ route, navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#e8b923" />
+        <ActivityIndicator size="large" color={COLORS.accentPrimary} />
       </View>
     );
   }
@@ -56,29 +58,31 @@ const TeamDetailsScreen = ({ route, navigation }) => {
   }
 
   const statItems = [
-    { label: 'Power', value: team.power, icon: '⚡', color: '#e8b923' },
-    { label: 'Morale', value: `${team.morale}%`, icon: '🔥', color: '#f59e0b' },
-    { label: 'Wins', value: stats?.won ?? '-', icon: '✅', color: '#10b981' },
+    { label: 'Power', value: team.power, icon: '⚡', color: COLORS.gold },
+    { label: 'Morale', value: `${team.morale}%`, icon: '🔥', color: COLORS.warning },
+    { label: 'Wins', value: stats?.won ?? '-', icon: '✅', color: COLORS.success },
     { label: 'Draws', value: stats?.drawn ?? '-', icon: '🤝', color: '#3b82f6' },
-    { label: 'Losses', value: stats?.lost ?? '-', icon: '❌', color: '#ef4444' },
-    { label: 'Goals For', value: stats?.goalsFor ?? '-', icon: '⚽', color: '#10b981' },
-    { label: 'Goals Against', value: stats?.goalsAgainst ?? '-', icon: '🥅', color: '#ef4444' },
-    { label: 'Points', value: stats?.points ?? '-', icon: '🏆', color: '#e8b923' },
+    { label: 'Losses', value: stats?.lost ?? '-', icon: '❌', color: COLORS.error },
+    { label: 'Goals For', value: stats?.goalsFor ?? '-', icon: '⚽', color: COLORS.success },
+    { label: 'Goals Against', value: stats?.goalsAgainst ?? '-', icon: '🥅', color: COLORS.error },
+    { label: 'Points', value: stats?.points ?? '-', icon: '🏆', color: COLORS.accentPrimary },
   ];
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Hero Section */}
       <LinearGradient
-        colors={[team.primaryColor || '#1a1a2e', '#0f0f23']}
+        colors={['#c0392b', '#e8443d', '#FF4B44']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.hero}
       >
-        {/* Large Badge */}
-        <View style={[styles.largeBadge, { backgroundColor: team.primaryColor || '#334155' }]}>
-          <Text style={styles.largeBadgeText}>{team.shortName}</Text>
-        </View>
+        {/* Large Logo */}
+        <TeamLogo
+          team={team}
+          size={90}
+          style={styles.heroLogo}
+        />
 
         <Text style={styles.teamName}>{team.name}</Text>
 
@@ -128,21 +132,18 @@ const TeamDetailsScreen = ({ route, navigation }) => {
         <>
           <Text style={styles.sectionTitle}>📈 Recent Form</Text>
           <View style={styles.formContainer}>
-            {stats.form.map((result, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.formBubble,
-                  {
-                    backgroundColor:
-                      result === 'W' ? '#10b981' :
-                      result === 'D' ? '#3b82f6' : '#ef4444',
-                  },
-                ]}
-              >
-                <Text style={styles.formText}>{result}</Text>
-              </View>
-            ))}
+            {stats.form.map((result, index) => {
+              // Backend sends: G = win, B = draw, M = loss
+              const isWin  = result === 'G' || result === 'W';
+              const isDraw = result === 'B' || result === 'D';
+              const symbol = isWin ? '✓' : isDraw ? '−' : '✕';
+              const bg     = isWin ? COLORS.success : isDraw ? '#94a3b8' : COLORS.error;
+              return (
+                <View key={index} style={[styles.formBubble, { backgroundColor: bg }]}>
+                  <Text style={styles.formText}>{symbol}</Text>
+                </View>
+              );
+            })}
           </View>
         </>
       )}
@@ -166,11 +167,11 @@ const TeamDetailsScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -179,20 +180,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   errorText: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontSize: 15,
     textAlign: 'center',
     paddingHorizontal: 32,
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#e8b923',
+    backgroundColor: COLORS.accentPrimary,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
   },
   retryText: {
-    color: '#0f0f23',
+    color: COLORS.textOnAccent,
     fontWeight: '800',
     fontSize: 15,
   },
@@ -204,29 +205,18 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
-  largeBadge: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.2)',
+  heroLogo: {
     marginBottom: 14,
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
-  largeBadgeText: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: '900',
-    letterSpacing: 1,
-  },
   teamName: {
-    color: '#f1f5f9',
+    color: '#ffffff',
     fontSize: 26,
     fontWeight: '900',
     textAlign: 'center',
@@ -234,15 +224,15 @@ const styles = StyleSheet.create({
   },
   rankBadge: {
     marginTop: 8,
-    backgroundColor: 'rgba(232, 185, 35, 0.15)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     paddingHorizontal: 14,
     paddingVertical: 5,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(232, 185, 35, 0.3)',
+    borderColor: 'rgba(255,255,255,0.25)',
   },
   rankText: {
-    color: '#e8b923',
+    color: '#ffffff',
     fontSize: 13,
     fontWeight: '700',
   },
@@ -257,14 +247,14 @@ const styles = StyleSheet.create({
   },
   infoDivider: {
     width: 1,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   infoIcon: {
     fontSize: 20,
     marginBottom: 4,
   },
   infoLabel: {
-    color: '#94a3b8',
+    color: 'rgba(255,255,255,0.7)',
     fontSize: 10,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -272,14 +262,14 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   infoValue: {
-    color: '#f1f5f9',
+    color: '#ffffff',
     fontSize: 12,
     fontWeight: '700',
     textAlign: 'center',
   },
   // ─── Stats ─────────────────────────────────────────────────────────
   sectionTitle: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 18,
     fontWeight: '800',
     marginHorizontal: 16,
@@ -293,14 +283,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   statCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
     width: '23%',
     flexGrow: 1,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   statIcon: {
     fontSize: 20,
@@ -312,7 +307,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   statLabel: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 10,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -333,20 +328,26 @@ const styles = StyleSheet.create({
   },
   formText: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '900',
+    lineHeight: 20,
   },
   // ─── Capacity ──────────────────────────────────────────────────────
   capacityCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     marginHorizontal: 16,
     marginTop: 20,
     padding: 16,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   capacityIcon: {
     fontSize: 32,
@@ -356,13 +357,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   capacityLabel: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
   },
   capacityValue: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 18,
     fontWeight: '800',
     marginTop: 2,

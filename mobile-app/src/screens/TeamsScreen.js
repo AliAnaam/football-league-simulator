@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import TeamCard from '../components/TeamCard';
 import * as api from '../services/api';
+import { COLORS } from '../theme';
 
 const TeamsScreen = ({ navigation }) => {
   const [teams, setTeams] = useState([]);
@@ -65,7 +66,7 @@ const TeamsScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#e8b923" />
+        <ActivityIndicator size="large" color={COLORS.accentPrimary} />
         <Text style={styles.loadingText}>Loading teams...</Text>
       </View>
     );
@@ -97,7 +98,7 @@ const TeamsScreen = ({ navigation }) => {
         <TextInput
           style={styles.searchInput}
           placeholder="Search teams..."
-          placeholderTextColor="#64748b"
+          placeholderTextColor={COLORS.textMuted}
           value={searchQuery}
           onChangeText={setSearchQuery}
           autoCorrect={false}
@@ -120,7 +121,7 @@ const TeamsScreen = ({ navigation }) => {
           />
         )}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#e8b923" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.accentPrimary} />
         }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
@@ -137,16 +138,16 @@ const TeamsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     marginTop: 12,
     fontSize: 15,
     fontWeight: '600',
@@ -156,20 +157,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   errorText: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontSize: 15,
     textAlign: 'center',
     paddingHorizontal: 32,
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#e8b923',
+    backgroundColor: COLORS.accentPrimary,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
   },
   retryText: {
-    color: '#0f0f23',
+    color: COLORS.textOnAccent,
     fontWeight: '800',
     fontSize: 15,
   },
@@ -177,17 +178,19 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCardAlt,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.borderAccent,
   },
   title: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 28,
     fontWeight: '900',
   },
   subtitle: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     fontSize: 13,
     fontWeight: '500',
     marginTop: 4,
@@ -195,7 +198,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     marginHorizontal: 16,
     marginTop: 14,
     marginBottom: 6,
@@ -203,7 +206,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
   },
   searchIcon: {
     fontSize: 16,
@@ -211,12 +219,12 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: '500',
   },
   clearIcon: {
-    color: '#64748b',
+    color: COLORS.textMuted,
     fontSize: 16,
     fontWeight: '700',
     padding: 4,
@@ -230,7 +238,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    color: '#64748b',
+    color: COLORS.textMuted,
     fontSize: 15,
     fontWeight: '600',
   },

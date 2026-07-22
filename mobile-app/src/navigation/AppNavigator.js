@@ -2,6 +2,8 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import { COLORS } from '../theme';
 
 // ─── Screens ─────────────────────────────────────────────────────────────────
 import HomeScreen from '../screens/HomeScreen';
@@ -44,8 +46,18 @@ const SimulateStackNavigator = () => (
 
 // ─── Tab Navigator ──────────────────────────────────────────────────────────
 const getTabBarIcon = (routeName, focused, color, size) => {
+  // Home tab: use the LaLiga logo instead of the football Ionicon
+  if (routeName === 'Home') {
+    return (
+      <Image
+        source={require('../../assets/laliga-logo.png')}
+        style={{ width: size + 6, height: size + 6 }}
+        contentFit="contain"
+        tintColor={color}
+      />
+    );
+  }
   const icons = {
-    Home: focused ? 'football' : 'football-outline',
     Teams: focused ? 'people' : 'people-outline',
     Fixtures: focused ? 'calendar' : 'calendar-outline',
     Standings: focused ? 'trophy' : 'trophy-outline',
@@ -60,18 +72,19 @@ const AppNavigator = () => (
       headerShown: false,
       tabBarIcon: ({ focused, color, size }) =>
         getTabBarIcon(route.name, focused, color, size),
-      tabBarActiveTintColor: '#e8b923',
-      tabBarInactiveTintColor: '#64748b',
+      // ─── Match website: red active tint, slate muted ───────────────
+      tabBarActiveTintColor: COLORS.accentPrimary,
+      tabBarInactiveTintColor: COLORS.textMuted,
       tabBarStyle: {
-        backgroundColor: '#1a1a2e',
-        borderTopColor: '#334155',
+        backgroundColor: COLORS.bgCard,
+        borderTopColor: COLORS.borderAccent,
         borderTopWidth: 1,
         height: 88,
         paddingTop: 8,
         paddingBottom: 28,
-        shadowColor: '#000',
+        shadowColor: COLORS.shadow,
         shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.08,
         shadowRadius: 8,
         elevation: 10,
       },

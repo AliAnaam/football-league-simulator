@@ -6,6 +6,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import MatchCard from '../components/MatchCard';
 import * as api from '../services/api';
+import { COLORS } from '../theme';
 
 const SimulationScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -171,7 +172,7 @@ const SimulationScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#e8b923" />
+        <ActivityIndicator size="large" color={COLORS.accentPrimary} />
         <Text style={styles.loadingText}>Loading simulation...</Text>
       </View>
     );
@@ -185,7 +186,9 @@ const SimulationScreen = ({ navigation }) => {
     >
       {/* Header */}
       <LinearGradient
-        colors={['#1a1a2e', '#16213e', '#0f0f23']}
+        colors={['#c0392b', '#e8443d', '#FF4B44']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         style={styles.header}
       >
         <Text style={styles.title}>⚡ Simulation</Text>
@@ -202,7 +205,7 @@ const SimulationScreen = ({ navigation }) => {
         </View>
         <View style={styles.progressTrack}>
           <LinearGradient
-            colors={['#e8b923', '#f59e0b']}
+            colors={[COLORS.accentPrimary, '#e8443d']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[styles.progressFill, { width: `${progress * 100}%` }]}
@@ -222,13 +225,13 @@ const SimulationScreen = ({ navigation }) => {
               activeOpacity={0.8}
             >
               <LinearGradient
-                colors={simulating ? ['#334155', '#1e293b'] : ['#e8b923', '#d97706']}
+                colors={simulating ? [COLORS.border, COLORS.bgPrimary] : [COLORS.accentPrimary, '#e8443d']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.simButtonGradient}
               >
                 {simulating ? (
-                  <ActivityIndicator size="small" color="#e8b923" />
+                  <ActivityIndicator size="small" color={COLORS.accentPrimary} />
                 ) : (
                   <>
                     <Text style={styles.simButtonIcon}>▶️</Text>
@@ -257,7 +260,7 @@ const SimulationScreen = ({ navigation }) => {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={['#e8b923', '#f59e0b', '#d97706']}
+              colors={[COLORS.gold, '#f59e0b', '#d97706']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.simButtonGradient}
@@ -290,7 +293,7 @@ const SimulationScreen = ({ navigation }) => {
       {/* Simulation Results */}
       {simulating && (
         <View style={styles.simulatingContainer}>
-          <ActivityIndicator size="large" color="#e8b923" />
+          <ActivityIndicator size="large" color={COLORS.accentPrimary} />
           <Text style={styles.simulatingText}>Simulating matches...</Text>
           <Text style={styles.simulatingSubtext}>The match engine is calculating results</Text>
         </View>
@@ -336,19 +339,19 @@ const SimulationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
   },
   content: {
     paddingBottom: 20,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     marginTop: 12,
     fontSize: 15,
     fontWeight: '600',
@@ -362,25 +365,30 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 24,
   },
   title: {
-    color: '#f1f5f9',
+    color: '#ffffff',
     fontSize: 28,
     fontWeight: '900',
   },
   subtitle: {
-    color: '#94a3b8',
+    color: 'rgba(255,255,255,0.75)',
     fontSize: 13,
     fontWeight: '500',
     marginTop: 4,
   },
   // ─── Progress ──────────────────────────────────────────────────────
   progressCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 16,
     padding: 18,
     marginHorizontal: 16,
     marginTop: 20,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -389,18 +397,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   progressLabel: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   progressValue: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 14,
     fontWeight: '800',
   },
   progressTrack: {
     height: 8,
-    backgroundColor: '#334155',
+    backgroundColor: COLORS.accentLight,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -409,7 +417,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   progressPercent: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'right',
@@ -424,7 +432,7 @@ const styles = StyleSheet.create({
   simButton: {
     borderRadius: 18,
     overflow: 'hidden',
-    shadowColor: '#e8b923',
+    shadowColor: COLORS.accentPrimary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -445,7 +453,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   simButtonText: {
-    color: '#0f0f23',
+    color: '#ffffff',
     fontSize: 18,
     fontWeight: '900',
     letterSpacing: 0.5,
@@ -457,23 +465,23 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.borderAccent,
     gap: 10,
   },
   secondaryButtonIcon: {
     fontSize: 18,
   },
   secondaryButtonText: {
-    color: '#f1f5f9',
+    color: COLORS.accentPrimary,
     fontSize: 15,
     fontWeight: '700',
   },
   winnerButton: {
     borderRadius: 18,
     overflow: 'hidden',
-    shadowColor: '#e8b923',
+    shadowColor: COLORS.gold,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -496,31 +504,31 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingVertical: 14,
     borderRadius: 14,
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    backgroundColor: 'rgba(239, 68, 68, 0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(239, 68, 68, 0.3)',
+    borderColor: 'rgba(239, 68, 68, 0.2)',
     gap: 8,
   },
   resetButtonIcon: {
     fontSize: 16,
   },
   resetButtonText: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontSize: 14,
     fontWeight: '700',
   },
   // ─── Error ─────────────────────────────────────────────────────────
   errorCard: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    backgroundColor: 'rgba(239, 68, 68, 0.08)',
     borderRadius: 12,
     padding: 14,
     marginHorizontal: 16,
     marginTop: 12,
     borderWidth: 1,
-    borderColor: 'rgba(239, 68, 68, 0.3)',
+    borderColor: 'rgba(239, 68, 68, 0.2)',
   },
   errorText: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontSize: 13,
     fontWeight: '600',
     textAlign: 'center',
@@ -531,20 +539,20 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   simulatingText: {
-    color: '#e8b923',
+    color: COLORS.accentPrimary,
     fontSize: 17,
     fontWeight: '800',
     marginTop: 16,
   },
   simulatingSubtext: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     fontSize: 13,
     fontWeight: '500',
     marginTop: 4,
   },
   // ─── Results ───────────────────────────────────────────────────────
   resultsTitle: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 18,
     fontWeight: '800',
     marginHorizontal: 16,
@@ -554,17 +562,22 @@ const styles = StyleSheet.create({
   resultCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     marginHorizontal: 16,
     marginVertical: 4,
     padding: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   resultTeam: {
     flex: 1,
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 13,
     fontWeight: '700',
   },
@@ -572,14 +585,14 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   resultScoreBox: {
-    backgroundColor: '#16213e',
+    backgroundColor: COLORS.bgDark,
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 10,
     marginHorizontal: 8,
   },
   resultScore: {
-    color: '#e8b923',
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: '900',
     letterSpacing: 1,

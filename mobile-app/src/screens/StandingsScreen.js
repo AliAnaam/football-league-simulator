@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import StandingsRow from '../components/StandingsRow';
 import * as api from '../services/api';
+import { COLORS } from '../theme';
 
 const StandingsScreen = ({ navigation }) => {
   const [standings, setStandings] = useState([]);
@@ -45,7 +46,7 @@ const StandingsScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#e8b923" />
+        <ActivityIndicator size="large" color={COLORS.accentPrimary} />
         <Text style={styles.loadingText}>Loading standings...</Text>
       </View>
     );
@@ -74,15 +75,15 @@ const StandingsScreen = ({ navigation }) => {
       {/* Legend */}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#e8b923' }]} />
+          <View style={[styles.legendDot, { backgroundColor: COLORS.gold }]} />
           <Text style={styles.legendText}>Champion</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#10b981' }]} />
+          <View style={[styles.legendDot, { backgroundColor: COLORS.success }]} />
           <Text style={styles.legendText}>UCL Qualification</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#ef4444' }]} />
+          <View style={[styles.legendDot, { backgroundColor: COLORS.error }]} />
           <Text style={styles.legendText}>Relegation</Text>
         </View>
       </View>
@@ -103,7 +104,7 @@ const StandingsScreen = ({ navigation }) => {
             keyExtractor={(item) => item.teamId.toString()}
             renderItem={({ item }) => <StandingsRow row={item} />}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#e8b923" />
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.accentPrimary} />
             }
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.tableBody}
@@ -117,16 +118,16 @@ const StandingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0f0f23',
+    backgroundColor: COLORS.bgPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     marginTop: 12,
     fontSize: 15,
     fontWeight: '600',
@@ -136,20 +137,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   errorText: {
-    color: '#ef4444',
+    color: COLORS.error,
     fontSize: 15,
     textAlign: 'center',
     paddingHorizontal: 32,
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#e8b923',
+    backgroundColor: COLORS.accentPrimary,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
   },
   retryText: {
-    color: '#0f0f23',
+    color: COLORS.textOnAccent,
     fontWeight: '800',
     fontSize: 15,
   },
@@ -158,17 +159,19 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCardAlt,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.borderAccent,
   },
   title: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 28,
     fontWeight: '900',
   },
   subtitle: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     fontSize: 13,
     fontWeight: '500',
     marginTop: 4,
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   legendText: {
-    color: '#94a3b8',
+    color: COLORS.textSecondary,
     fontSize: 11,
     fontWeight: '600',
   },
@@ -203,13 +206,18 @@ const styles = StyleSheet.create({
   table: {
     flex: 1,
     minWidth: 380,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 16,
     marginHorizontal: 8,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: COLORS.border,
     overflow: 'hidden',
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   tableBody: {
     paddingBottom: 8,

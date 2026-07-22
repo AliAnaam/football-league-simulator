@@ -1,16 +1,23 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-// ─── Team Badge (small) ─────────────────────────────────────────────────────
-const MiniBadge = ({ shortName, primaryColor }) => (
-  <View style={[styles.badge, { backgroundColor: primaryColor || '#334155' }]}>
-    <Text style={styles.badgeText}>{shortName || '??'}</Text>
-  </View>
-);
+import TeamLogo from './TeamLogo';
+import { COLORS } from '../theme';
 
 // ─── MatchCard Component ─────────────────────────────────────────────────────
 const MatchCard = ({ match, compact = false }) => {
   const isPlayed = match.played;
+
+  // Build team objects for logo lookup
+  const homeTeam = {
+    shortName: match.homeTeamShortName,
+    logoUrl: match.homeLogoUrl,
+    primaryColor: match.homePrimaryColor,
+  };
+  const awayTeam = {
+    shortName: match.awayTeamShortName,
+    logoUrl: match.awayLogoUrl,
+    primaryColor: match.awayPrimaryColor,
+  };
 
   return (
     <View style={[styles.card, compact && styles.cardCompact]}>
@@ -32,7 +39,7 @@ const MatchCard = ({ match, compact = false }) => {
       <View style={styles.matchRow}>
         {/* Home Team */}
         <View style={styles.teamSide}>
-          <MiniBadge shortName={match.homeTeamShortName} primaryColor={match.homePrimaryColor} />
+          <TeamLogo team={homeTeam} size={compact ? 28 : 34} />
           <Text style={styles.teamName} numberOfLines={1}>
             {compact ? match.homeTeamShortName : match.homeTeamName}
           </Text>
@@ -54,7 +61,7 @@ const MatchCard = ({ match, compact = false }) => {
           <Text style={styles.teamName} numberOfLines={1}>
             {compact ? match.awayTeamShortName : match.awayTeamName}
           </Text>
-          <MiniBadge shortName={match.awayTeamShortName} primaryColor={match.awayPrimaryColor} />
+          <TeamLogo team={awayTeam} size={compact ? 28 : 34} />
         </View>
       </View>
     </View>
@@ -63,18 +70,18 @@ const MatchCard = ({ match, compact = false }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: COLORS.bgCard,
     borderRadius: 14,
     padding: 14,
     marginVertical: 5,
     marginHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#334155',
-    shadowColor: '#000',
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
   cardCompact: {
     paddingVertical: 10,
@@ -90,12 +97,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   dateText: {
-    color: '#94a3b8',
+    color: COLORS.textMuted,
     fontSize: 11,
     fontWeight: '500',
   },
   ftBadge: {
-    backgroundColor: '#10b981',
+    backgroundColor: COLORS.success,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,
@@ -119,28 +126,14 @@ const styles = StyleSheet.create({
   teamSideAway: {
     justifyContent: 'flex-end',
   },
-  badge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.12)',
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: '800',
-  },
   teamName: {
-    color: '#f1f5f9',
+    color: COLORS.textPrimary,
     fontSize: 13,
     fontWeight: '600',
     flexShrink: 1,
   },
   scoreBox: {
-    backgroundColor: '#16213e',
+    backgroundColor: COLORS.bgDark,
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 10,
@@ -149,13 +142,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scoreText: {
-    color: '#e8b923',
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: '900',
     letterSpacing: 1,
   },
   vsText: {
-    color: '#64748b',
+    color: COLORS.textMuted,
     fontSize: 13,
     fontWeight: '700',
     fontStyle: 'italic',
