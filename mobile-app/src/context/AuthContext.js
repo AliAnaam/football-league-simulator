@@ -32,7 +32,11 @@ export const AuthProvider = ({ children }) => {
     if (response && response.success) {
       const userData = { username };
       setUser(userData);
-      await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(userData));
+      try {
+        await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(userData));
+      } catch (err) {
+        console.warn('Failed to persist auth session to storage:', err);
+      }
       return response;
     } else {
       throw new Error(response?.message || 'Login failed');
@@ -44,7 +48,11 @@ export const AuthProvider = ({ children }) => {
     if (response && response.success) {
       const userData = { username };
       setUser(userData);
-      await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(userData));
+      try {
+        await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(userData));
+      } catch (err) {
+        console.warn('Failed to persist auth session to storage:', err);
+      }
       return response;
     } else {
       throw new Error(response?.message || 'Registration failed');
@@ -55,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem(AUTH_KEY);
     } catch (err) {
-      console.error('Logout error:', err);
+      console.warn('Logout storage error:', err);
     } finally {
       setUser(null);
     }
